@@ -9,7 +9,10 @@ import { useGLTF } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 
 import islandScene from "../assets/3d/island.glb";
-import { getStageFromIslandRotation } from "../utils/islandInteraction";
+import {
+  getStageFromIslandRotation,
+  getTargetRotationForArea,
+} from "../utils/islandInteraction";
 
 const ROTATION_DRAG_FACTOR = 0.02;
 const KEYBOARD_ROTATION_STEP = 0.01 * Math.PI;
@@ -72,6 +75,17 @@ export const Island = forwardRef(function Island(
     stopRotating: () => {
       isRotatingRef.current = false;
       setIsRotating(false);
+    },
+    goToArea: (areaId) => {
+      if (!islandRef.current) {
+        return;
+      }
+
+      isRotatingRef.current = false;
+      setIsRotating(false);
+      rotationSpeed.current = 0;
+      islandRef.current.rotation.y = getTargetRotationForArea(areaId);
+      setCurrentStage(areaId);
     },
   }));
 

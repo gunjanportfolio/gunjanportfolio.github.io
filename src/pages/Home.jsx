@@ -49,12 +49,17 @@ const Home = () => {
     islandControlsRef.current?.stopRotating();
   };
 
+  const handleGoToArea = (areaId) => {
+    islandControlsRef.current?.goToArea(areaId);
+    setCurrentStage(areaId);
+  };
+
   const biplane = getBiplaneScreenAdjustments(window.innerWidth);
   const island = getIslandScreenAdjustments(window.innerWidth);
 
   return (
     <section className="w-full h-screen relative" data-testid="home-page">
-      <div className="absolute top-28 left-0 right-0 z-10 flex items-center justify-center pointer-events-none">
+      <div className="absolute top-24 left-0 right-0 z-10 flex items-center justify-center pointer-events-none">
         <div className="pointer-events-auto">
           {currentStage && <HomeInfo currentStage={currentStage} />}
         </div>
@@ -104,9 +109,11 @@ const Home = () => {
       </Canvas>
 
       <ExploreControls
+        currentStage={currentStage}
         onRotateLeft={handleRotateLeft}
         onRotateRight={handleRotateRight}
         onStopRotate={handleStopRotate}
+        onGoToArea={handleGoToArea}
       />
 
       <div className="absolute bottom-2 left-2 z-20">

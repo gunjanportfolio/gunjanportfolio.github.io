@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import HomeInfo from "./HomeInfo";
 import { SITE_NAME } from "../config/site";
+import { PORTFOLIO_AREA_IDS } from "../constants/portfolioAreas";
 
 function renderHomeInfo(currentStage) {
   return render(
@@ -14,32 +15,34 @@ function renderHomeInfo(currentStage) {
 }
 
 describe("HomeInfo", () => {
-  it("renders intro stage with site name", () => {
-    renderHomeInfo(1);
+  it("renders home area details with site name", () => {
+    renderHomeInfo(PORTFOLIO_AREA_IDS.HOME);
     expect(screen.getByTestId("home-stage-1")).toHaveTextContent(SITE_NAME);
+    expect(screen.getByTestId("home-stage-1")).toHaveTextContent(/island area/i);
   });
 
-  it("renders about CTA on stage 2", () => {
-    renderHomeInfo(2);
-    expect(screen.getByTestId("home-stage-2")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /learn more/i })).toHaveAttribute(
-      "href",
-      "/about"
-    );
-  });
-
-  it("renders projects CTA on stage 3", () => {
-    renderHomeInfo(3);
-    expect(screen.getByTestId("home-stage-3")).toBeInTheDocument();
+  it("renders about area details and CTA", () => {
+    renderHomeInfo(PORTFOLIO_AREA_IDS.ABOUT);
+    expect(screen.getByTestId("home-stage-2")).toHaveTextContent(/skills/i);
     expect(
-      screen.getByRole("link", { name: /visit my portfolio/i })
+      screen.getByRole("link", { name: /explore full about/i })
+    ).toHaveAttribute("href", "/about");
+  });
+
+  it("renders projects area details and CTA", () => {
+    renderHomeInfo(PORTFOLIO_AREA_IDS.PROJECTS);
+    expect(screen.getByTestId("home-stage-3")).toHaveTextContent(
+      /featured builds/i
+    );
+    expect(
+      screen.getByRole("link", { name: /browse all projects/i })
     ).toHaveAttribute("href", "/projects");
   });
 
-  it("renders contact CTA on stage 4", () => {
-    renderHomeInfo(4);
-    expect(screen.getByTestId("home-stage-4")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /let's talk/i })).toHaveAttribute(
+  it("renders contact area details and CTA", () => {
+    renderHomeInfo(PORTFOLIO_AREA_IDS.CONTACT);
+    expect(screen.getByTestId("home-stage-4")).toHaveTextContent(/collaborate/i);
+    expect(screen.getByRole("link", { name: /open contact/i })).toHaveAttribute(
       "href",
       "/contact"
     );

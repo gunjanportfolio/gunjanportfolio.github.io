@@ -1,8 +1,16 @@
 import { useEffect, useRef } from "react";
 
+import { PORTFOLIO_AREAS } from "../../constants/portfolioAreas";
+
 const HOLD_INTERVAL_MS = 40;
 
-const ExploreControls = ({ onRotateLeft, onRotateRight, onStopRotate }) => {
+const ExploreControls = ({
+  currentStage,
+  onRotateLeft,
+  onRotateRight,
+  onStopRotate,
+  onGoToArea,
+}) => {
   const holdIntervalRef = useRef(null);
 
   const clearHoldInterval = () => {
@@ -39,14 +47,49 @@ const ExploreControls = ({ onRotateLeft, onRotateRight, onStopRotate }) => {
     startHold(onRotateRight);
   };
 
+  const createAreaClickHandler = (areaId) => {
+    return () => {
+      onGoToArea(areaId);
+    };
+  };
+
   return (
     <div
-      className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-3 pointer-events-none"
+      className="absolute bottom-6 left-1/2 z-20 flex w-full max-w-3xl -translate-x-1/2 flex-col items-center gap-3 px-4 pointer-events-none"
       data-testid="explore-controls"
     >
-      <p className="rounded-lg bg-white/80 px-4 py-2 text-center text-sm font-medium text-slate-700 shadow-sm backdrop-blur-sm sm:text-base">
-        Drag the island or use ← → / A D to fly past different areas
+      <p className="rounded-lg bg-white/85 px-4 py-2 text-center text-sm font-medium text-slate-700 shadow-sm backdrop-blur-sm sm:text-base">
+        Fly to an island area to explore portfolio details
       </p>
+
+      <div
+        className="flex flex-wrap justify-center gap-2 pointer-events-auto"
+        data-testid="area-navigator"
+      >
+        {PORTFOLIO_AREAS.map((area) => {
+          const isActive = currentStage === area.id;
+          const handleAreaClick = createAreaClickHandler(area.id);
+
+          return (
+            <button
+              key={area.key}
+              type="button"
+              data-testid={`area-${area.key}`}
+              aria-current={isActive ? "true" : undefined}
+              aria-label={`Go to ${area.label} area`}
+              onClick={handleAreaClick}
+              className={`rounded-full px-4 py-2 text-sm font-semibold shadow transition active:scale-95 ${
+                isActive
+                  ? "bg-blue-500 text-white"
+                  : "bg-white/90 text-slate-800 hover:bg-white"
+              }`}
+            >
+              {area.label}
+            </button>
+          );
+        })}
+      </div>
+
       <div className="flex gap-3 pointer-events-auto">
         <button
           type="button"

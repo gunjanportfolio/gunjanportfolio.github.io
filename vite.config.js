@@ -20,12 +20,14 @@ export default defineConfig({
       include: [
         "src/components/**/*.{js,jsx}",
         "src/config/**/*.{js,jsx}",
+        "src/constants/portfolioAreas.js",
         "src/hooks/**/*.{js,jsx}",
         "src/utils/**/*.{js,jsx}",
       ],
       exclude: [
         "src/**/*.test.{js,jsx}",
         "src/components/index.js",
+        "src/components/ExploreControls/index.js",
         "src/utils/index.js",
         "src/test/**",
       ],
