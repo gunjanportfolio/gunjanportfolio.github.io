@@ -32,7 +32,7 @@ describe("HomeInfo", () => {
   it("renders projects area details and CTA", () => {
     renderHomeInfo(PORTFOLIO_AREA_IDS.PROJECTS);
     expect(screen.getByTestId("home-stage-3")).toHaveTextContent(
-      /featured builds/i
+      /featured analytics/i
     );
     expect(
       screen.getByRole("link", { name: /browse all projects/i })

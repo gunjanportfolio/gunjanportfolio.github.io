@@ -99,6 +99,15 @@ const Contact = () => {
 
       <div className='flex-1 min-w-[50%] flex flex-col'>
         <h1 className='head-text'>Get in Touch</h1>
+        <p className="mt-3 text-slate-500" data-testid="contact-email">
+          Email:{" "}
+          <a
+            className="text-blue-500 font-medium"
+            href={`mailto:${CONTACT_TO_EMAIL}`}
+          >
+            {CONTACT_TO_EMAIL}
+          </a>
+        </p>
 
         <form
           ref={formRef}

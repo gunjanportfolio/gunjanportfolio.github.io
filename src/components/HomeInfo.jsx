@@ -18,7 +18,7 @@ function getFeaturedSkillNames() {
 }
 
 function getLatestExperience() {
-  return experiences[experiences.length - 1];
+  return experiences[0];
 }
 
 function getFeaturedProjectNames() {
@@ -82,7 +82,7 @@ const HomeInfo = ({ currentStage }) => {
           Island area · Projects
         </p>
         <p className="font-medium text-center sm:text-xl">
-          Featured builds from the portfolio
+          Featured analytics & BA impact
         </p>
         <ul className="text-sm sm:text-base text-center text-white/90 space-y-1">
           {featuredProjects.map((projectName) => (
@@ -107,7 +107,7 @@ const HomeInfo = ({ currentStage }) => {
           Ready to collaborate on your next idea?
         </p>
         <p className="text-sm sm:text-base text-center text-white/90">
-          Fly into this area and send a message — the fox page is waiting.
+          Fly into this area and send a message to gunjanbandekar20@gmail.com.
         </p>
         <Link to="/contact" className="neo-brutalism-white neo-btn">
           Open contact
