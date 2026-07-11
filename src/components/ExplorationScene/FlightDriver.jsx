@@ -25,12 +25,15 @@ export default function FlightDriver({
   useFrame((_, delta) => {
     const result = tickRef.current(delta);
 
-    // Use the main path sample for the bird so it flies into the section.
     if (result.plane) {
       birdPoseRef.current = result.plane;
-    }
-
-    if (result.lookAt) {
+      // Keep the camera looking at the dragon so the return flight feels continuous.
+      lookAtRef.current = {
+        x: result.plane.position.x,
+        y: result.plane.position.y + 0.4,
+        z: result.plane.position.z,
+      };
+    } else if (result.lookAt) {
       lookAtRef.current = result.lookAt;
     }
 

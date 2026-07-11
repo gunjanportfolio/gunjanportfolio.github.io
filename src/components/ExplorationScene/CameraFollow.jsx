@@ -2,6 +2,8 @@ import { useEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 
 import {
+  CAMERA_FOLLOW_ABOVE,
+  CAMERA_FOLLOW_BEHIND,
   CAMERA_FOLLOW_DAMPING,
   CAMERA_LOOK_AT_DAMPING,
   CAMERA_SETTLE_DAMPING,
@@ -12,14 +14,17 @@ import {
   dampVector3,
 } from "../../utils/explorationFlight";
 
-const SETTLE_COMPLETE_DISTANCE = 0.12;
-const SETTLE_MAX_FRAMES = 240;
+const SETTLE_COMPLETE_DISTANCE = 0.2;
+const SETTLE_MAX_FRAMES = 160;
 
 export default function CameraFollow({
   enabled = false,
   isSettling = false,
   followPoseRef,
   lookAtRef,
+  behind = CAMERA_FOLLOW_BEHIND,
+  above = CAMERA_FOLLOW_ABOVE,
+  followDamping = CAMERA_FOLLOW_DAMPING,
   onSettleComplete,
 }) {
   const { camera } = useThree();
@@ -48,7 +53,9 @@ export default function CameraFollow({
       const followPose = followPoseRef.current;
       const followTarget = computeCameraFollowTarget(
         followPose.position,
-        followPose.headingY
+        followPose.headingY,
+        behind,
+        above
       );
       const nextPosition = dampVector3(
         {
@@ -57,7 +64,7 @@ export default function CameraFollow({
           z: camera.position.z,
         },
         followTarget,
-        CAMERA_FOLLOW_DAMPING,
+        followDamping,
         delta
       );
 
