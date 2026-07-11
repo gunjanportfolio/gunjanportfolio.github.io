@@ -87,16 +87,18 @@ const HomeInfo = ({ currentStage, onBack }) => {
   if (currentStage === PORTFOLIO_AREA_IDS.HOME) {
     return (
       <div data-testid="home-stage-1" className={boxClassName}>
-        <p className="font-poppins text-xs uppercase tracking-[0.2em] text-white/80">
+        <p className="font-poppins text-xs uppercase tracking-[0.2em] text-white">
           Island area · Home
         </p>
-        <h1 className="sm:text-2xl text-xl font-semibold text-center text-white">
+        <h1 className="sm:text-3xl text-2xl font-semibold text-center text-white">
           Hi, I'm <span className="mx-1">{SITE_NAME}</span> 👋
         </h1>
-        <p className="font-medium sm:text-lg text-center text-white/95">
+        <p className="font-medium sm:text-xl text-center text-white">
           {SITE_TAGLINE} {SITE_LOCATION}
         </p>
-        <p className="text-sm sm:text-base text-center text-white/85">{SITE_BIO}</p>
+        <p className="text-sm sm:text-base text-center text-white/95 leading-relaxed">
+          {SITE_BIO}
+        </p>
         {onBack ? (
           <div className="mt-4 flex w-full justify-center">
             <BackToIslandAction onBack={onBack} />
@@ -112,17 +114,17 @@ const HomeInfo = ({ currentStage, onBack }) => {
 
     return (
       <div className={boxClassName} data-testid="home-stage-2">
-        <p className="font-poppins text-xs uppercase tracking-[0.2em] text-white/80">
+        <p className="font-poppins text-xs uppercase tracking-[0.2em] text-white">
           Island area · About
         </p>
-        <p className="font-medium sm:text-xl text-center">
+        <p className="font-semibold sm:text-2xl text-xl text-center text-white">
           Skills & experience from the journey so far
         </p>
-        <p className="text-sm sm:text-base text-center text-white/90">
+        <p className="text-sm sm:text-base text-center text-white">
           Latest role: {latestExperience.title} at{" "}
           {latestExperience.company_name}
         </p>
-        <p className="text-sm text-center text-white/85">
+        <p className="text-sm sm:text-base text-center text-white/95">
           {featuredSkills.join(" · ")}
         </p>
         <PrimaryCta
@@ -139,13 +141,13 @@ const HomeInfo = ({ currentStage, onBack }) => {
 
     return (
       <div className={boxClassName} data-testid="home-stage-3">
-        <p className="font-poppins text-xs uppercase tracking-[0.2em] text-white/80">
+        <p className="font-poppins text-xs uppercase tracking-[0.2em] text-white">
           Island area · Projects
         </p>
-        <p className="font-medium text-center sm:text-xl">
+        <p className="font-semibold text-center text-xl sm:text-2xl text-white">
           Featured analytics & BA impact
         </p>
-        <ul className="text-sm sm:text-base text-center text-white/90 space-y-1">
+        <ul className="text-sm sm:text-base text-center text-white space-y-1.5">
           {featuredProjects.map((projectName) => (
             <li key={projectName}>{projectName}</li>
           ))}
@@ -162,13 +164,13 @@ const HomeInfo = ({ currentStage, onBack }) => {
   if (currentStage === PORTFOLIO_AREA_IDS.CONTACT) {
     return (
       <div className={boxClassName} data-testid="home-stage-4">
-        <p className="font-poppins text-xs uppercase tracking-[0.2em] text-white/80">
+        <p className="font-poppins text-xs uppercase tracking-[0.2em] text-white">
           Island area · Contact
         </p>
-        <p className="font-medium sm:text-xl text-center">
+        <p className="font-semibold sm:text-2xl text-xl text-center text-white">
           Ready to collaborate on your next idea?
         </p>
-        <p className="text-sm sm:text-base text-center text-white/90">
+        <p className="text-sm sm:text-base text-center text-white">
           Send a message to gunjanbandekar20@gmail.com from the contact page.
         </p>
         <PrimaryCta to="/contact" label="Open contact" onBack={onBack} />
