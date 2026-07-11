@@ -35,6 +35,7 @@ export default defineConfig({
         "src/components/ExplorationScene/InteriorCamera.jsx",
         "src/components/ExplorationScene/IslandHitboxes.jsx",
         "src/components/InteriorPanel/index.js",
+        "src/components/BackToIsland/index.js",
         "src/utils/index.js",
         "src/test/**",
       ],

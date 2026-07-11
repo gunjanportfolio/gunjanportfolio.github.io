@@ -3,7 +3,7 @@ import {
   VerticalTimelineElement,
 } from "react-vertical-timeline-component";
 
-import { CTA } from "../components";
+import { CTA, BackToIsland } from "../components";
 import { SITE_BIO, SITE_NAME } from "../config/site";
 import { education, experiences, skillCategories } from "../constants";
 
@@ -12,6 +12,10 @@ import "react-vertical-timeline-component/style.min.css";
 const About = () => {
   return (
     <section className="max-container">
+      <div className="mb-6">
+        <BackToIsland />
+      </div>
+
       <h1 className="head-text" data-testid="about-heading">
         Hello, I'm{" "}
         <span className="blue-gradient_text font-semibold drop-shadow">

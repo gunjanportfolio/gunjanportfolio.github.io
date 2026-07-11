@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import { CTA } from "../components";
+import { CTA, BackToIsland } from "../components";
 import { projects } from "../constants";
 import { arrow } from "../assets/icons";
 
@@ -11,6 +11,10 @@ function isExternalLink(link) {
 const Projects = () => {
   return (
     <section className="max-container">
+      <div className="mb-6">
+        <BackToIsland />
+      </div>
+
       <h1 className="head-text">
         My{" "}
         <span className="blue-gradient_text drop-shadow font-semibold">

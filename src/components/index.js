@@ -6,14 +6,16 @@ import Footer from "./Footer";
 import HomeInfo from "./HomeInfo";
 import ExploreControls from "./ExploreControls";
 import MusicToggle from "./MusicToggle";
+import BackToIsland from "./BackToIsland";
 
 export {
-    CTA,
-    Alert,
-    Loader,
-    Navbar,
-    Footer,
-    HomeInfo,
-    ExploreControls,
-    MusicToggle
-}
+  CTA,
+  Alert,
+  Loader,
+  Navbar,
+  Footer,
+  HomeInfo,
+  ExploreControls,
+  MusicToggle,
+  BackToIsland,
+};

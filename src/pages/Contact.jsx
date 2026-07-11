@@ -1,7 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useRef, useState } from "react";
 
-import { Alert, Loader } from "../components";
+import { Alert, BackToIsland, Loader } from "../components";
 import {
   CONTACT_TO_EMAIL,
   FORMCARRY_ENDPOINT,
@@ -68,6 +68,9 @@ const Contact = () => {
       {alert.show && <Alert {...alert} />}
 
       <div className="flex-1 min-w-[50%] flex flex-col">
+        <div className="mb-6">
+          <BackToIsland />
+        </div>
         <h1 className="head-text">Get in Touch</h1>
         <p className="mt-3 text-slate-500" data-testid="contact-email">
           Email:{" "}
