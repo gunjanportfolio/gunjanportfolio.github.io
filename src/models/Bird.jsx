@@ -49,12 +49,7 @@ export function Bird({ isControlled = false, poseRef }) {
   });
 
   return (
-    <mesh
-      ref={birdRef}
-      position={AMBIENT_START_POSITION}
-      scale={BIRD_SCALE}
-      data-testid="exploration-bird"
-    >
+    <mesh ref={birdRef} position={AMBIENT_START_POSITION} scale={BIRD_SCALE}>
       <primitive object={scene} />
     </mesh>
   );

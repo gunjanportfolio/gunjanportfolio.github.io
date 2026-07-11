@@ -36,7 +36,7 @@ export function Plane({
   });
 
   return (
-    <mesh {...props} ref={ref} data-testid="exploration-plane">
+    <mesh {...props} ref={ref}>
       <primitive object={scene} />
     </mesh>
   );
