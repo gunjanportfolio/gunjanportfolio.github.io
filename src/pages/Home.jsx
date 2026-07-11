@@ -1,8 +1,6 @@
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 
-import sakura from "../assets/sakura.mp3";
-import { soundoff, soundon } from "../assets/icons";
 import ExploreControls from "../components/ExploreControls";
 import { HomeInfo, Loader } from "../components";
 import { Bird, Island, Plane, Sky } from "../models";
@@ -12,55 +10,10 @@ import {
 } from "../utils";
 
 const Home = () => {
-  const audioRef = useRef(new Audio(sakura));
-  audioRef.current.volume = 0.4;
-  audioRef.current.loop = true;
   const islandControlsRef = useRef(null);
 
   const [currentStage, setCurrentStage] = useState(1);
   const [isRotating, setIsRotating] = useState(false);
-  const [isPlayingMusic, setIsPlayingMusic] = useState(true);
-
-  useEffect(() => {
-    const audioElement = audioRef.current;
-
-    const playMusic = () => {
-      const playPromise = audioElement.play();
-
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Browsers may block autoplay until the first user gesture.
-        });
-      }
-    };
-
-    const handleFirstInteraction = () => {
-      if (isPlayingMusic) {
-        playMusic();
-      }
-
-      window.removeEventListener("pointerdown", handleFirstInteraction);
-      window.removeEventListener("keydown", handleFirstInteraction);
-    };
-
-    if (isPlayingMusic) {
-      playMusic();
-      window.addEventListener("pointerdown", handleFirstInteraction);
-      window.addEventListener("keydown", handleFirstInteraction);
-    } else {
-      audioElement.pause();
-    }
-
-    return () => {
-      audioElement.pause();
-      window.removeEventListener("pointerdown", handleFirstInteraction);
-      window.removeEventListener("keydown", handleFirstInteraction);
-    };
-  }, [isPlayingMusic]);
-
-  const handleToggleMusic = () => {
-    setIsPlayingMusic((previousValue) => !previousValue);
-  };
 
   const handleRotateLeft = () => {
     islandControlsRef.current?.rotateLeft();
@@ -140,16 +93,6 @@ const Home = () => {
         onStopRotate={handleStopRotate}
         onGoToArea={handleGoToArea}
       />
-
-      <div className="absolute bottom-2 left-2 z-20">
-        <img
-          src={!isPlayingMusic ? soundoff : soundon}
-          alt="jukebox"
-          onClick={handleToggleMusic}
-          className="w-10 h-10 cursor-pointer object-contain"
-          data-testid="music-toggle"
-        />
-      </div>
     </section>
   );
 };

@@ -28,6 +28,7 @@ export default defineConfig({
         "src/**/*.test.{js,jsx}",
         "src/components/index.js",
         "src/components/ExploreControls/index.js",
+        "src/components/MusicToggle/index.js",
         "src/utils/index.js",
         "src/test/**",
       ],
