@@ -17,13 +17,6 @@ import {
   getIslandScreenAdjustments,
 } from "../utils";
 import {
-  CAMERA_FOLLOW_ABOVE,
-  CAMERA_FOLLOW_BEHIND,
-  CAMERA_FOLLOW_DAMPING,
-  CAMERA_RETURN_FOLLOW_ABOVE,
-  CAMERA_RETURN_FOLLOW_BEHIND,
-  CAMERA_RETURN_FOLLOW_DAMPING,
-  DEFAULT_CAMERA_LOOK_AT,
   RETURN_FLIGHT_ARC_HEIGHT,
   RETURN_FLIGHT_DURATION_SECONDS,
   computeInteriorBirdViewingScene,
@@ -219,12 +212,6 @@ const Home = () => {
       if (isReturningHomeRef.current) {
         setCurrentStage(RETURN_FLIGHT_AREA_ID);
         markArrivedAtCurrentArea(RETURN_FLIGHT_AREA_ID);
-        setInteriorAreaId(null);
-        lookAtRef.current = {
-          x: DEFAULT_CAMERA_LOOK_AT.x,
-          y: DEFAULT_CAMERA_LOOK_AT.y,
-          z: DEFAULT_CAMERA_LOOK_AT.z,
-        };
       }
     },
     [
@@ -324,7 +311,6 @@ const Home = () => {
     if (started) {
       seedBirdFlight(fromPosition, birdHome);
       setBirdControlled(true);
-      islandControlsRef.current?.goToArea(RETURN_FLIGHT_AREA_ID);
     } else {
       isReturningHomeRef.current = false;
       setIsExitingInterior(false);
@@ -334,6 +320,7 @@ const Home = () => {
 
     setCurrentStage(RETURN_FLIGHT_AREA_ID);
     markArrivedAtCurrentArea(RETURN_FLIGHT_AREA_ID);
+    islandControlsRef.current?.goToArea(RETURN_FLIGHT_AREA_ID);
   }, [
     cancelFlight,
     clearSettling,
@@ -346,17 +333,13 @@ const Home = () => {
   ]);
 
   const outdoorControlsVisible =
-    !isInside &&
-    !isTravelingToInterior &&
-    !(isExitingInterior && isFlying);
+    !isInside && !isExitingInterior && !isTravelingToInterior;
   const showBiplane = outdoorControlsVisible;
-  // Hide island only while reading the card; reveal it immediately on the way back.
-  const showIslandBackdrop = !isInside;
-  const shouldFollowBird =
-    isFlying || isTravelingToInterior || isExitingInterior;
+  const showIslandBackdrop =
+    !isInside && !isExitingInterior;
+  const shouldFollowBird = isFlying || isTravelingToInterior;
   const shouldUseInteriorCamera =
     Boolean(interiorView) && isInside && !isExitingInterior;
-  const isReturnCamera = isExitingInterior;
 
   return (
     <section className="w-full h-screen relative" data-testid="home-page">
@@ -419,21 +402,6 @@ const Home = () => {
             isSettling={isSettling && isExitingInterior}
             followPoseRef={birdPoseRef}
             lookAtRef={lookAtRef}
-            behind={
-              isReturnCamera
-                ? CAMERA_RETURN_FOLLOW_BEHIND
-                : CAMERA_FOLLOW_BEHIND
-            }
-            above={
-              isReturnCamera
-                ? CAMERA_RETURN_FOLLOW_ABOVE
-                : CAMERA_FOLLOW_ABOVE
-            }
-            followDamping={
-              isReturnCamera
-                ? CAMERA_RETURN_FOLLOW_DAMPING
-                : CAMERA_FOLLOW_DAMPING
-            }
             onSettleComplete={handleSettleComplete}
           />
           <InteriorCamera
