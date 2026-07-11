@@ -13,6 +13,9 @@ import { PORTFOLIO_AREA_IDS } from "../constants/portfolioAreas";
 const FEATURED_SKILL_COUNT = 6;
 const FEATURED_PROJECT_COUNT = 3;
 
+const STACKED_CTA_CLASS =
+  "neo-brutalism-white flex w-[90%] sm:w-1/2 items-center justify-center gap-3 rounded-lg px-6 py-3 text-center font-semibold text-blue-500";
+
 function getFeaturedSkillNames() {
   return skills.slice(0, FEATURED_SKILL_COUNT).map((skill) => skill.name);
 }
@@ -25,13 +28,65 @@ function getFeaturedProjectNames() {
   return projects.slice(0, FEATURED_PROJECT_COUNT).map((project) => project.name);
 }
 
-const HomeInfo = ({ currentStage }) => {
-  if (currentStage === PORTFOLIO_AREA_IDS.HOME) {
+function BackToIslandAction({ onBack }) {
+  if (!onBack) {
+    return null;
+  }
+
+  const handleBack = () => {
+    onBack();
+  };
+
+  return (
+    <button
+      type="button"
+      data-testid="interior-back-button"
+      aria-label="Back to island"
+      onClick={handleBack}
+      className="rounded-full bg-white/95 px-4 py-2 text-sm font-semibold text-slate-800 shadow-md transition hover:bg-white active:scale-95"
+    >
+      ← Back to island
+    </button>
+  );
+}
+
+function PrimaryCta({ to, label, onBack }) {
+  const linkContent = (
+    <>
+      {label}
+      <img src={arrow} alt="arrow" className="w-4 h-4 object-contain" />
+    </>
+  );
+
+  if (onBack) {
     return (
       <div
-        data-testid="home-stage-1"
-        className="info-box max-w-xl"
+        className="mt-4 flex w-full flex-col items-center gap-3"
+        data-testid="interior-cta-stack"
       >
+        <Link to={to} className={STACKED_CTA_CLASS}>
+          {linkContent}
+        </Link>
+        <BackToIslandAction onBack={onBack} />
+      </div>
+    );
+  }
+
+  return (
+    <Link to={to} className="neo-brutalism-white neo-btn">
+      {linkContent}
+    </Link>
+  );
+}
+
+const HomeInfo = ({ currentStage, onBack }) => {
+  const boxClassName = onBack
+    ? "info-box max-w-xl !pb-8"
+    : "info-box max-w-xl";
+
+  if (currentStage === PORTFOLIO_AREA_IDS.HOME) {
+    return (
+      <div data-testid="home-stage-1" className={boxClassName}>
         <p className="font-poppins text-xs uppercase tracking-[0.2em] text-white/80">
           Island area · Home
         </p>
@@ -42,6 +97,11 @@ const HomeInfo = ({ currentStage }) => {
           {SITE_TAGLINE} {SITE_LOCATION}
         </p>
         <p className="text-sm sm:text-base text-center text-white/85">{SITE_BIO}</p>
+        {onBack ? (
+          <div className="mt-4 flex w-full justify-center">
+            <BackToIslandAction onBack={onBack} />
+          </div>
+        ) : null}
       </div>
     );
   }
@@ -51,7 +111,7 @@ const HomeInfo = ({ currentStage }) => {
     const featuredSkills = getFeaturedSkillNames();
 
     return (
-      <div className="info-box max-w-xl" data-testid="home-stage-2">
+      <div className={boxClassName} data-testid="home-stage-2">
         <p className="font-poppins text-xs uppercase tracking-[0.2em] text-white/80">
           Island area · About
         </p>
@@ -65,10 +125,11 @@ const HomeInfo = ({ currentStage }) => {
         <p className="text-sm text-center text-white/85">
           {featuredSkills.join(" · ")}
         </p>
-        <Link to="/about" className="neo-brutalism-white neo-btn">
-          Explore full about
-          <img src={arrow} alt="arrow" className="w-4 h-4 object-contain" />
-        </Link>
+        <PrimaryCta
+          to="/about"
+          label="Explore full about"
+          onBack={onBack}
+        />
       </div>
     );
   }
@@ -77,7 +138,7 @@ const HomeInfo = ({ currentStage }) => {
     const featuredProjects = getFeaturedProjectNames();
 
     return (
-      <div className="info-box max-w-xl" data-testid="home-stage-3">
+      <div className={boxClassName} data-testid="home-stage-3">
         <p className="font-poppins text-xs uppercase tracking-[0.2em] text-white/80">
           Island area · Projects
         </p>
@@ -89,17 +150,18 @@ const HomeInfo = ({ currentStage }) => {
             <li key={projectName}>{projectName}</li>
           ))}
         </ul>
-        <Link to="/projects" className="neo-brutalism-white neo-btn">
-          Browse all projects
-          <img src={arrow} alt="arrow" className="w-4 h-4 object-contain" />
-        </Link>
+        <PrimaryCta
+          to="/projects"
+          label="Browse all projects"
+          onBack={onBack}
+        />
       </div>
     );
   }
 
   if (currentStage === PORTFOLIO_AREA_IDS.CONTACT) {
     return (
-      <div className="info-box max-w-xl" data-testid="home-stage-4">
+      <div className={boxClassName} data-testid="home-stage-4">
         <p className="font-poppins text-xs uppercase tracking-[0.2em] text-white/80">
           Island area · Contact
         </p>
@@ -109,10 +171,7 @@ const HomeInfo = ({ currentStage }) => {
         <p className="text-sm sm:text-base text-center text-white/90">
           Send a message to gunjanbandekar20@gmail.com from the contact page.
         </p>
-        <Link to="/contact" className="neo-brutalism-white neo-btn">
-          Open contact
-          <img src={arrow} alt="arrow" className="w-4 h-4 object-contain" />
-        </Link>
+        <PrimaryCta to="/contact" label="Open contact" onBack={onBack} />
       </div>
     );
   }

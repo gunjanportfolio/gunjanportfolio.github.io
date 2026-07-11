@@ -1,15 +1,15 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import HomeInfo from "./HomeInfo";
 import { SITE_NAME } from "../config/site";
 import { PORTFOLIO_AREA_IDS } from "../constants/portfolioAreas";
 
-function renderHomeInfo(currentStage) {
+function renderHomeInfo(currentStage, onBack) {
   return render(
     <MemoryRouter>
-      <HomeInfo currentStage={currentStage} />
+      <HomeInfo currentStage={currentStage} onBack={onBack} />
     </MemoryRouter>
   );
 }
@@ -37,6 +37,26 @@ describe("HomeInfo", () => {
     expect(
       screen.getByRole("link", { name: /browse all projects/i })
     ).toHaveAttribute("href", "/projects");
+  });
+
+  it("places back to island directly under the browse CTA", () => {
+    const onBack = vi.fn();
+    renderHomeInfo(PORTFOLIO_AREA_IDS.PROJECTS, onBack);
+
+    const stack = screen.getByTestId("interior-cta-stack");
+    const browseLink = screen.getByRole("link", {
+      name: /browse all projects/i,
+    });
+    const backButton = screen.getByTestId("interior-back-button");
+
+    expect(stack).toContainElement(browseLink);
+    expect(stack).toContainElement(backButton);
+    expect(browseLink.compareDocumentPosition(backButton)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING
+    );
+
+    fireEvent.click(backButton);
+    expect(onBack).toHaveBeenCalledTimes(1);
   });
 
   it("renders contact area details and CTA", () => {
