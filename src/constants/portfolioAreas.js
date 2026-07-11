@@ -5,7 +5,7 @@ export const PORTFOLIO_AREA_IDS = {
   CONTACT: 4,
 };
 
-export const DEFAULT_HITBOX_SIZE = [7, 6, 7];
+export const DEFAULT_HITBOX_SIZE = [12, 10, 12];
 
 export const PORTFOLIO_AREAS = [
   {

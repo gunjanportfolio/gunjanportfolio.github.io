@@ -188,6 +188,6 @@ describe("computeInteriorCameraTarget", () => {
 
 describe("getHitboxSizeForArea", () => {
   it("returns the configured hitbox size", () => {
-    expect(getHitboxSizeForArea(PORTFOLIO_AREA_IDS.ABOUT)).toEqual([7, 6, 7]);
+    expect(getHitboxSizeForArea(PORTFOLIO_AREA_IDS.ABOUT)).toEqual([12, 10, 12]);
   });
 });

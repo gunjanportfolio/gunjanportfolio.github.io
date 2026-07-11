@@ -165,5 +165,5 @@ export function computeInteriorCameraTarget(
 
 export function getHitboxSizeForArea(areaId) {
   const area = getPortfolioAreaById(areaId);
-  return [...(area.hitboxSize || [7, 6, 7])];
+  return [...(area.hitboxSize || [12, 10, 12])];
 }

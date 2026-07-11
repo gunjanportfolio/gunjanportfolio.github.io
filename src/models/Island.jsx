@@ -36,6 +36,7 @@ export const Island = forwardRef(function Island(
     hitboxesEnabled = true,
     onManualInteraction,
     onEnterArea,
+    blockCanvasDragRef,
     currentFocusPoint: _currentFocusPoint,
     ...props
   },
@@ -56,6 +57,8 @@ export const Island = forwardRef(function Island(
   const suppressStageUpdatesRef = useRef(suppressStageUpdates);
   const rotationEnabledRef = useRef(rotationEnabled);
   const onManualInteractionRef = useRef(onManualInteraction);
+  const localBlockDragRef = useRef(false);
+  const canvasDragBlockRef = blockCanvasDragRef || localBlockDragRef;
 
   useEffect(() => {
     isRotatingRef.current = isRotating;
@@ -190,7 +193,7 @@ export const Island = forwardRef(function Island(
     };
 
     const handlePointerDown = (event) => {
-      if (!rotationEnabledRef.current) {
+      if (!rotationEnabledRef.current || canvasDragBlockRef.current) {
         return;
       }
 
@@ -240,7 +243,11 @@ export const Island = forwardRef(function Island(
     };
 
     const handleTouchStart = (event) => {
-      if (!rotationEnabledRef.current || !event.touches[0]) {
+      if (
+        !rotationEnabledRef.current ||
+        canvasDragBlockRef.current ||
+        !event.touches[0]
+      ) {
         return;
       }
 
@@ -353,7 +360,7 @@ export const Island = forwardRef(function Island(
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [gl, setIsRotating, viewport.width]);
+  }, [gl, setIsRotating, viewport.width, canvasDragBlockRef]);
 
   useFrame(() => {
     if (!islandRef.current) {
@@ -431,7 +438,11 @@ export const Island = forwardRef(function Island(
         geometry={nodes.pCube11_rocks1_0.geometry}
         material={materials.PaletteMaterial001}
       />
-      <IslandHitboxes enabled={hitboxesEnabled} onEnterArea={onEnterArea} />
+      <IslandHitboxes
+        enabled={hitboxesEnabled}
+        onEnterArea={onEnterArea}
+        blockCanvasDragRef={canvasDragBlockRef}
+      />
     </a.group>
   );
 });

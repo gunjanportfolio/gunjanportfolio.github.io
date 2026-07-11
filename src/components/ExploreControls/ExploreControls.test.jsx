@@ -17,7 +17,7 @@ describe("ExploreControls", () => {
     );
 
     expect(screen.getByTestId("explore-controls")).toHaveTextContent(
-      /click a building on the island/i
+      /choose an area or click a building/i
     );
     expect(screen.getByTestId("area-navigator")).toBeInTheDocument();
     expect(screen.getByTestId("area-home")).toHaveAttribute(

@@ -18,7 +18,6 @@ import {
 } from "../utils";
 import {
   computeInteriorCameraTarget,
-  getHeadingY,
   getWaypointForArea,
   localWaypointToWorld,
 } from "../utils/explorationFlight";
@@ -45,7 +44,7 @@ const Home = () => {
   const planePoseRef = useRef(null);
   const birdPoseRef = useRef(null);
   const lookAtRef = useRef(null);
-  const lastPlanePositionRef = useRef(null);
+  const blockCanvasDragRef = useRef(false);
 
   const [currentStage, setCurrentStage] = useState(1);
   const [isRotating, setIsRotating] = useState(false);
@@ -57,7 +56,6 @@ const Home = () => {
   const {
     isFlying,
     isSettling,
-    startFlight,
     cancelFlight,
     clearSettling,
     markArrivedAtCurrentArea,
@@ -70,8 +68,6 @@ const Home = () => {
 
   const biplane = getBiplaneScreenAdjustments(window.innerWidth);
   const island = getIslandScreenAdjustments(window.innerWidth);
-  const islandPosition = toPositionObject(island.position);
-  const islandScale = toScaleObject(island.scale);
 
   const interiorCameraTarget = useMemo(() => {
     if (!interiorAreaId) {
@@ -81,9 +77,9 @@ const Home = () => {
     const area = getPortfolioAreaById(interiorAreaId);
     const lookAt = localWaypointToWorld(
       getWaypointForArea(interiorAreaId),
-      islandPosition,
+      toPositionObject(island.position),
       getTargetRotationForArea(interiorAreaId),
-      islandScale
+      toScaleObject(island.scale)
     );
 
     return computeInteriorCameraTarget(
@@ -91,7 +87,7 @@ const Home = () => {
       undefined,
       area.interiorApproach
     );
-  }, [interiorAreaId, islandPosition, islandScale]);
+  }, [interiorAreaId, island.position, island.scale]);
 
   const handleRotateLeft = () => {
     if (isInside || isExitingInterior) {
@@ -119,33 +115,19 @@ const Home = () => {
 
   const handleStageChange = useCallback(
     (stage) => {
-      if (isFlying || isInside) {
+      if (isFlying || isInside || isExitingInterior) {
         return;
       }
 
       setCurrentStage(stage);
       markArrivedAtCurrentArea(stage);
     },
-    [isFlying, isInside, markArrivedAtCurrentArea]
+    [isExitingInterior, isFlying, isInside, markArrivedAtCurrentArea]
   );
 
-  const handleFlightArrived = useCallback(
-    (areaId, planePose, birdPose) => {
-      if (planePose) {
-        planePoseRef.current = planePose;
-        lastPlanePositionRef.current = planePose.position;
-      }
-
-      if (birdPose) {
-        birdPoseRef.current = birdPose;
-      }
-
-      setCurrentStage(areaId);
-      markArrivedAtCurrentArea(areaId);
-      setCreaturesControlled(true);
-    },
-    [markArrivedAtCurrentArea]
-  );
+  const handleFlightArrived = useCallback(() => {
+    setCreaturesControlled(true);
+  }, []);
 
   const handleSettleComplete = useCallback(() => {
     clearSettling();
@@ -155,6 +137,7 @@ const Home = () => {
     (areaId) => {
       cancelFlight();
       clearSettling();
+      blockCanvasDragRef.current = false;
       setIsExitingInterior(false);
       setInteriorAreaId(areaId);
       setCurrentStage(areaId);
@@ -167,13 +150,13 @@ const Home = () => {
 
   const handleEnterArea = useCallback(
     (areaId) => {
-      if (isInside || isExitingInterior || isFlying) {
+      if (isInside || isExitingInterior) {
         return;
       }
 
       enterInterior(areaId);
     },
-    [enterInterior, isExitingInterior, isFlying, isInside]
+    [enterInterior, isExitingInterior, isInside]
   );
 
   const handleBackToIsland = useCallback(() => {
@@ -181,51 +164,18 @@ const Home = () => {
       return;
     }
 
+    blockCanvasDragRef.current = false;
     setIsInside(false);
     setIsExitingInterior(true);
-  }, [isInside]);
+    setCurrentStage(1);
+    markArrivedAtCurrentArea(1);
+    islandControlsRef.current?.goToArea(1);
+  }, [isInside, markArrivedAtCurrentArea]);
 
   const handleInteriorExitComplete = useCallback(() => {
     setIsExitingInterior(false);
     setInteriorAreaId(null);
   }, []);
-
-  const handleGoToArea = (areaId) => {
-    if (isInside || isExitingInterior) {
-      return;
-    }
-
-    const destination = localWaypointToWorld(
-      getWaypointForArea(areaId),
-      islandPosition,
-      getTargetRotationForArea(areaId),
-      islandScale
-    );
-
-    const fromPosition =
-      planePoseRef.current?.position ||
-      lastPlanePositionRef.current ||
-      toPositionObject(biplane.position);
-
-    const started = startFlight(areaId, fromPosition, destination);
-
-    if (!started) {
-      return;
-    }
-
-    const startHeadingY = getHeadingY(fromPosition, destination);
-    const startPose = {
-      position: fromPosition,
-      headingY: startHeadingY,
-    };
-    planePoseRef.current = startPose;
-    birdPoseRef.current = startPose;
-    lookAtRef.current = destination;
-    lastPlanePositionRef.current = fromPosition;
-
-    setCreaturesControlled(true);
-    islandControlsRef.current?.goToArea(areaId);
-  };
 
   const outdoorControlsVisible = !isInside && !isExitingInterior;
 
@@ -272,7 +222,7 @@ const Home = () => {
             onArrived={handleFlightArrived}
           />
           <CameraFollow
-            enabled={isFlying && !isInside}
+            enabled={false}
             isSettling={isSettling && !isInside && !isExitingInterior}
             planePoseRef={planePoseRef}
             lookAtRef={lookAtRef}
@@ -293,11 +243,12 @@ const Home = () => {
             isRotating={isRotating}
             setIsRotating={setIsRotating}
             setCurrentStage={handleStageChange}
-            suppressStageUpdates={isFlying || isInside}
+            suppressStageUpdates={isFlying || isInside || isExitingInterior}
             rotationEnabled={!isInside && !isExitingInterior}
-            hitboxesEnabled={!isInside && !isExitingInterior && !isFlying}
+            hitboxesEnabled={!isInside && !isExitingInterior}
             onManualInteraction={handleManualInteraction}
             onEnterArea={handleEnterArea}
+            blockCanvasDragRef={blockCanvasDragRef}
             position={island.position}
             rotation={[0.1, 4.7077, 0]}
             scale={island.scale}
@@ -320,7 +271,7 @@ const Home = () => {
           onRotateLeft={handleRotateLeft}
           onRotateRight={handleRotateRight}
           onStopRotate={handleStopRotate}
-          onGoToArea={handleGoToArea}
+          onGoToArea={handleEnterArea}
         />
       ) : null}
     </section>

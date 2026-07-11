@@ -5,36 +5,14 @@ import { PORTFOLIO_AREAS } from "../../constants/portfolioAreas";
 const CURSOR_POINTER = "pointer";
 const CURSOR_GRAB = "grab";
 
-function createEnterHandler(areaId, onEnterArea) {
-  return (event) => {
-    event.stopPropagation();
-    onEnterArea(areaId);
-  };
-}
-
-function createHoverEnterHandler() {
-  return (event) => {
-    event.stopPropagation();
-    document.body.style.cursor = CURSOR_POINTER;
-  };
-}
-
-function createHoverLeaveHandler(isInteractionEnabled) {
-  return () => {
-    document.body.style.cursor = isInteractionEnabled
-      ? CURSOR_GRAB
-      : "default";
-  };
-}
-
 /**
- * Invisible clickable zones over island buildings/areas.
- * Must be rendered as children of the island group so they rotate with it.
- * Do not put data-testid on these meshes (breaks R3F prop parsing).
+ * Clickable zones over island buildings/areas.
+ * Uses onPointerDown (not onClick) so canvas drag handlers cannot swallow the interaction.
  */
 export default function IslandHitboxes({
   enabled = true,
   onEnterArea,
+  blockCanvasDragRef,
 }) {
   const enabledRef = useRef(enabled);
   const onEnterAreaRef = useRef(onEnterArea);
@@ -50,16 +28,41 @@ export default function IslandHitboxes({
   useEffect(() => {
     return () => {
       document.body.style.cursor = "default";
+      if (blockCanvasDragRef) {
+        blockCanvasDragRef.current = false;
+      }
     };
+  }, [blockCanvasDragRef]);
+
+  const handlePointerDown = useCallback(
+    (areaId) => {
+      return (event) => {
+        event.stopPropagation();
+        if (blockCanvasDragRef) {
+          blockCanvasDragRef.current = true;
+        }
+
+        if (!enabledRef.current || !onEnterAreaRef.current) {
+          return;
+        }
+
+        onEnterAreaRef.current(areaId);
+      };
+    },
+    [blockCanvasDragRef]
+  );
+
+  const handlePointerOver = useCallback((event) => {
+    event.stopPropagation();
+    document.body.style.cursor = CURSOR_POINTER;
   }, []);
 
-  const handleEnter = useCallback((areaId) => {
-    if (!enabledRef.current || !onEnterAreaRef.current) {
-      return;
+  const handlePointerOut = useCallback(() => {
+    document.body.style.cursor = enabledRef.current ? CURSOR_GRAB : "default";
+    if (blockCanvasDragRef) {
+      blockCanvasDragRef.current = false;
     }
-
-    onEnterAreaRef.current(areaId);
-  }, []);
+  }, [blockCanvasDragRef]);
 
   if (!enabled) {
     return null;
@@ -68,22 +71,20 @@ export default function IslandHitboxes({
   return (
     <group>
       {PORTFOLIO_AREAS.map((area) => {
-        const handleClick = createEnterHandler(area.id, handleEnter);
-        const handlePointerOver = createHoverEnterHandler();
-        const handlePointerOut = createHoverLeaveHandler(enabled);
+        const onPointerDown = handlePointerDown(area.id);
 
         return (
           <mesh
             key={area.key}
-            position={[area.waypoint.x, area.waypoint.y, area.waypoint.z]}
-            onClick={handleClick}
+            position={[area.waypoint.x, area.waypoint.y * 0.35, area.waypoint.z]}
+            onPointerDown={onPointerDown}
             onPointerOver={handlePointerOver}
             onPointerOut={handlePointerOut}
           >
-            <boxGeometry args={area.hitboxSize || [7, 6, 7]} />
+            <boxGeometry args={area.hitboxSize || [12, 10, 12]} />
             <meshBasicMaterial
               transparent
-              opacity={0}
+              opacity={0.001}
               depthWrite={false}
             />
           </mesh>

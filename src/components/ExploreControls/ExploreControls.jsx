@@ -59,7 +59,7 @@ const ExploreControls = ({
       data-testid="explore-controls"
     >
       <p className="rounded-lg bg-white/85 px-4 py-2 text-center text-sm font-medium text-slate-700 shadow-sm backdrop-blur-sm sm:text-base">
-        Click a building on the island to step inside
+        Choose an area or click a building to step inside
       </p>
 
       <div
