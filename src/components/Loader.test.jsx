@@ -6,13 +6,18 @@ vi.mock("@react-three/drei", () => ({
 }));
 
 import Loader from "./Loader";
+import { LOADING_ISLAND_MESSAGE } from "../constants/exploreUi";
 
 describe("Loader", () => {
-  it("renders a spinner inside Html", () => {
+  it("renders a spinner and clear loading instruction", () => {
     render(<Loader />);
+
     expect(screen.getByTestId("loader-html")).toBeInTheDocument();
+    expect(screen.getByTestId("scene-loader")).toHaveTextContent(
+      LOADING_ISLAND_MESSAGE
+    );
     expect(
-      screen.getByTestId("loader-html").querySelector(".animate-spin")
+      screen.getByTestId("scene-loader").querySelector(".animate-spin")
     ).not.toBeNull();
   });
 });

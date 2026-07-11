@@ -6,11 +6,17 @@ import {
   CameraFollow,
   FlightDriver,
   InteriorCamera,
+  LoadingTracker,
 } from "../components/ExplorationScene";
 import InteriorPanel from "../components/InteriorPanel";
+import SceneLoadingOverlay from "../components/SceneLoadingOverlay";
 import { Loader } from "../components";
 import useExplorationFlight from "../hooks/useExplorationFlight";
 import { Bird, BIRD_AMBIENT_START, Island, Plane, Sky } from "../models";
+import {
+  LOADING_MIN_VISIBLE_MS,
+  LOADING_OVERLAY_FADE_MS,
+} from "../constants/exploreUi";
 import { PORTFOLIO_AREA_IDS } from "../constants/portfolioAreas";
 import {
   getBiplaneScreenAdjustments,
@@ -62,6 +68,10 @@ const Home = () => {
   const [interiorAreaId, setInteriorAreaId] = useState(null);
   const [isTravelingToInterior, setIsTravelingToInterior] = useState(false);
   const [interiorView, setInteriorView] = useState(null);
+  const [isLoadingOverlayMounted, setIsLoadingOverlayMounted] = useState(true);
+  const [isLoadingFading, setIsLoadingFading] = useState(false);
+  const loadStartedAtRef = useRef(Date.now());
+  const hasScheduledLoadingFadeRef = useRef(false);
 
   const {
     isFlying,
@@ -73,9 +83,47 @@ const Home = () => {
     tick,
   } = useExplorationFlight();
 
+  const handleSceneReady = useCallback(() => {
+    if (hasScheduledLoadingFadeRef.current) {
+      return;
+    }
+
+    hasScheduledLoadingFadeRef.current = true;
+    const elapsedMs = Date.now() - loadStartedAtRef.current;
+    const remainingMs = Math.max(0, LOADING_MIN_VISIBLE_MS - elapsedMs);
+
+    window.setTimeout(() => {
+      setIsLoadingFading(true);
+    }, remainingMs);
+  }, []);
+
   useEffect(() => {
     markArrivedAtCurrentArea(1);
   }, [markArrivedAtCurrentArea]);
+
+  useEffect(() => {
+    const safetyTimeoutId = window.setTimeout(() => {
+      handleSceneReady();
+    }, 12000);
+
+    return () => {
+      window.clearTimeout(safetyTimeoutId);
+    };
+  }, [handleSceneReady]);
+
+  useEffect(() => {
+    if (!isLoadingFading) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setIsLoadingOverlayMounted(false);
+    }, LOADING_OVERLAY_FADE_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [isLoadingFading]);
 
   const biplane = getBiplaneScreenAdjustments(window.innerWidth);
   const island = getIslandScreenAdjustments(window.innerWidth);
@@ -333,7 +381,10 @@ const Home = () => {
   ]);
 
   const outdoorControlsVisible =
-    !isInside && !isExitingInterior && !isTravelingToInterior;
+    !isLoadingOverlayMounted &&
+    !isInside &&
+    !isExitingInterior &&
+    !isTravelingToInterior;
   const showBiplane = outdoorControlsVisible;
   const showIslandBackdrop =
     !isInside && !isExitingInterior;
@@ -343,6 +394,11 @@ const Home = () => {
 
   return (
     <section className="w-full h-screen relative" data-testid="home-page">
+      <SceneLoadingOverlay
+        isVisible={isLoadingOverlayMounted}
+        isFading={isLoadingFading}
+      />
+
       {interiorAreaId && (isInside || isExitingInterior) ? (
         <InteriorPanel
           areaId={interiorAreaId}
@@ -397,6 +453,7 @@ const Home = () => {
             lookAtRef={lookAtRef}
             onArrived={handleFlightArrived}
           />
+          <LoadingTracker onReady={handleSceneReady} />
           <CameraFollow
             enabled={shouldFollowBird}
             isSettling={isSettling && isExitingInterior}

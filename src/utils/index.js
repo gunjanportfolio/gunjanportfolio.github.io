@@ -1,4 +1,8 @@
 export {
+  hasSeenExploreHint,
+  markExploreHintSeen,
+} from "./exploreHintStorage";
+export {
   buildFormcarryPayload,
   getBiplaneScreenAdjustments,
   getIslandScreenAdjustments,
