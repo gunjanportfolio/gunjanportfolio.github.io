@@ -19,17 +19,42 @@ const Home = () => {
 
   const [currentStage, setCurrentStage] = useState(1);
   const [isRotating, setIsRotating] = useState(false);
-  const [isPlayingMusic, setIsPlayingMusic] = useState(false);
+  const [isPlayingMusic, setIsPlayingMusic] = useState(true);
 
   useEffect(() => {
     const audioElement = audioRef.current;
 
+    const playMusic = () => {
+      const playPromise = audioElement.play();
+
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Browsers may block autoplay until the first user gesture.
+        });
+      }
+    };
+
+    const handleFirstInteraction = () => {
+      if (isPlayingMusic) {
+        playMusic();
+      }
+
+      window.removeEventListener("pointerdown", handleFirstInteraction);
+      window.removeEventListener("keydown", handleFirstInteraction);
+    };
+
     if (isPlayingMusic) {
-      audioElement.play();
+      playMusic();
+      window.addEventListener("pointerdown", handleFirstInteraction);
+      window.addEventListener("keydown", handleFirstInteraction);
+    } else {
+      audioElement.pause();
     }
 
     return () => {
       audioElement.pause();
+      window.removeEventListener("pointerdown", handleFirstInteraction);
+      window.removeEventListener("keydown", handleFirstInteraction);
     };
   }, [isPlayingMusic]);
 
