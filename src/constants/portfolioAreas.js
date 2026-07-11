@@ -5,6 +5,8 @@ export const PORTFOLIO_AREA_IDS = {
   CONTACT: 4,
 };
 
+export const DEFAULT_HITBOX_SIZE = [7, 6, 7];
+
 export const PORTFOLIO_AREAS = [
   {
     id: PORTFOLIO_AREA_IDS.HOME,
@@ -12,6 +14,8 @@ export const PORTFOLIO_AREAS = [
     label: "Home",
     targetRotation: 4.5,
     waypoint: { x: 0, y: 2, z: 8 },
+    hitboxSize: DEFAULT_HITBOX_SIZE,
+    interiorApproach: 0.62,
   },
   {
     id: PORTFOLIO_AREA_IDS.ABOUT,
@@ -19,6 +23,8 @@ export const PORTFOLIO_AREAS = [
     label: "About",
     targetRotation: 2.5,
     waypoint: { x: 8, y: 2.5, z: 2 },
+    hitboxSize: DEFAULT_HITBOX_SIZE,
+    interiorApproach: 0.62,
   },
   {
     id: PORTFOLIO_AREA_IDS.PROJECTS,
@@ -26,6 +32,8 @@ export const PORTFOLIO_AREAS = [
     label: "Projects",
     targetRotation: 1.05,
     waypoint: { x: 0, y: 3, z: -8 },
+    hitboxSize: DEFAULT_HITBOX_SIZE,
+    interiorApproach: 0.62,
   },
   {
     id: PORTFOLIO_AREA_IDS.CONTACT,
@@ -33,6 +41,8 @@ export const PORTFOLIO_AREAS = [
     label: "Contact",
     targetRotation: 5.65,
     waypoint: { x: -8, y: 2.5, z: 2 },
+    hitboxSize: DEFAULT_HITBOX_SIZE,
+    interiorApproach: 0.62,
   },
 ];
 

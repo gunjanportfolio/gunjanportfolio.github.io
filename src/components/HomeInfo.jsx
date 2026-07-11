@@ -107,7 +107,7 @@ const HomeInfo = ({ currentStage }) => {
           Ready to collaborate on your next idea?
         </p>
         <p className="text-sm sm:text-base text-center text-white/90">
-          Fly into this area and send a message to gunjanbandekar20@gmail.com.
+          Send a message to gunjanbandekar20@gmail.com from the contact page.
         </p>
         <Link to="/contact" className="neo-brutalism-white neo-btn">
           Open contact

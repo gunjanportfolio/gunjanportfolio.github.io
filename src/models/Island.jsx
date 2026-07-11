@@ -8,6 +8,7 @@ import {
 import { useGLTF } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 
+import IslandHitboxes from "../components/ExplorationScene/IslandHitboxes";
 import islandScene from "../assets/3d/island.glb";
 import {
   getShortestRotationDelta,
@@ -23,6 +24,7 @@ const CONTROL_ROTATION_STEP = 0.008 * Math.PI;
 const DAMPING_FACTOR = 0.95;
 const GOTO_ROTATION_LERP = 0.08;
 const GOTO_ROTATION_EPSILON = 0.002;
+const DRAG_THRESHOLD_PX = 8;
 
 export const Island = forwardRef(function Island(
   {
@@ -30,7 +32,10 @@ export const Island = forwardRef(function Island(
     setIsRotating,
     setCurrentStage,
     suppressStageUpdates = false,
+    rotationEnabled = true,
+    hitboxesEnabled = true,
     onManualInteraction,
+    onEnterArea,
     currentFocusPoint: _currentFocusPoint,
     ...props
   },
@@ -41,10 +46,15 @@ export const Island = forwardRef(function Island(
   const { nodes, materials } = useGLTF(islandScene);
 
   const lastX = useRef(0);
+  const pointerStartX = useRef(0);
+  const pointerStartY = useRef(0);
+  const isPointerDownRef = useRef(false);
+  const hasDraggedRef = useRef(false);
   const rotationSpeed = useRef(0);
   const isRotatingRef = useRef(isRotating);
   const targetRotationRef = useRef(null);
   const suppressStageUpdatesRef = useRef(suppressStageUpdates);
+  const rotationEnabledRef = useRef(rotationEnabled);
   const onManualInteractionRef = useRef(onManualInteraction);
 
   useEffect(() => {
@@ -54,6 +64,16 @@ export const Island = forwardRef(function Island(
   useEffect(() => {
     suppressStageUpdatesRef.current = suppressStageUpdates;
   }, [suppressStageUpdates]);
+
+  useEffect(() => {
+    rotationEnabledRef.current = rotationEnabled;
+    if (!rotationEnabled) {
+      isRotatingRef.current = false;
+      setIsRotating(false);
+      rotationSpeed.current = 0;
+      targetRotationRef.current = null;
+    }
+  }, [rotationEnabled, setIsRotating]);
 
   useEffect(() => {
     onManualInteractionRef.current = onManualInteraction;
@@ -70,7 +90,7 @@ export const Island = forwardRef(function Island(
   };
 
   const applyManualRotation = (rotationDelta, speed) => {
-    if (!islandRef.current) {
+    if (!islandRef.current || !rotationEnabledRef.current) {
       return;
     }
 
@@ -142,7 +162,7 @@ export const Island = forwardRef(function Island(
   useEffect(() => {
     const canvas = gl.domElement;
 
-    const startRotation = (clientX) => {
+    const beginDragRotation = (clientX) => {
       clearGoToTarget();
       notifyManualInteraction();
       isRotatingRef.current = true;
@@ -153,6 +173,8 @@ export const Island = forwardRef(function Island(
     const stopRotation = () => {
       isRotatingRef.current = false;
       setIsRotating(false);
+      isPointerDownRef.current = false;
+      hasDraggedRef.current = false;
     };
 
     const rotateByDelta = (clientX) => {
@@ -168,9 +190,17 @@ export const Island = forwardRef(function Island(
     };
 
     const handlePointerDown = (event) => {
+      if (!rotationEnabledRef.current) {
+        return;
+      }
+
       event.stopPropagation();
       event.preventDefault();
-      startRotation(event.clientX);
+      isPointerDownRef.current = true;
+      hasDraggedRef.current = false;
+      pointerStartX.current = event.clientX;
+      pointerStartY.current = event.clientY;
+      lastX.current = event.clientX;
     };
 
     const handlePointerUp = (event) => {
@@ -180,21 +210,47 @@ export const Island = forwardRef(function Island(
     };
 
     const handlePointerMove = (event) => {
+      if (!isPointerDownRef.current || !rotationEnabledRef.current) {
+        return;
+      }
+
       event.stopPropagation();
       event.preventDefault();
-      rotateByDelta(event.clientX);
+
+      const distanceX = Math.abs(event.clientX - pointerStartX.current);
+      const distanceY = Math.abs(event.clientY - pointerStartY.current);
+
+      if (
+        !hasDraggedRef.current &&
+        (distanceX > DRAG_THRESHOLD_PX || distanceY > DRAG_THRESHOLD_PX)
+      ) {
+        hasDraggedRef.current = true;
+        beginDragRotation(event.clientX);
+      }
+
+      if (hasDraggedRef.current) {
+        rotateByDelta(event.clientX);
+      }
     };
 
     const handlePointerLeave = () => {
-      if (isRotatingRef.current) {
+      if (isPointerDownRef.current || isRotatingRef.current) {
         stopRotation();
       }
     };
 
     const handleTouchStart = (event) => {
+      if (!rotationEnabledRef.current || !event.touches[0]) {
+        return;
+      }
+
       event.stopPropagation();
       event.preventDefault();
-      startRotation(event.touches[0].clientX);
+      isPointerDownRef.current = true;
+      hasDraggedRef.current = false;
+      pointerStartX.current = event.touches[0].clientX;
+      pointerStartY.current = event.touches[0].clientY;
+      lastX.current = event.touches[0].clientX;
     };
 
     const handleTouchEnd = (event) => {
@@ -204,16 +260,37 @@ export const Island = forwardRef(function Island(
     };
 
     const handleTouchMove = (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-      if (!event.touches[0]) {
+      if (
+        !isPointerDownRef.current ||
+        !rotationEnabledRef.current ||
+        !event.touches[0]
+      ) {
         return;
       }
-      rotateByDelta(event.touches[0].clientX);
+
+      event.stopPropagation();
+      event.preventDefault();
+
+      const touchX = event.touches[0].clientX;
+      const touchY = event.touches[0].clientY;
+      const distanceX = Math.abs(touchX - pointerStartX.current);
+      const distanceY = Math.abs(touchY - pointerStartY.current);
+
+      if (
+        !hasDraggedRef.current &&
+        (distanceX > DRAG_THRESHOLD_PX || distanceY > DRAG_THRESHOLD_PX)
+      ) {
+        hasDraggedRef.current = true;
+        beginDragRotation(touchX);
+      }
+
+      if (hasDraggedRef.current) {
+        rotateByDelta(touchX);
+      }
     };
 
     const handleKeyDown = (event) => {
-      if (!islandRef.current) {
+      if (!islandRef.current || !rotationEnabledRef.current) {
         return;
       }
 
@@ -320,33 +397,41 @@ export const Island = forwardRef(function Island(
   return (
     <a.group ref={islandRef} {...props}>
       <mesh
+        raycast={() => null}
         geometry={nodes.polySurface944_tree_body_0.geometry}
         material={materials.PaletteMaterial001}
       />
       <mesh
+        raycast={() => null}
         geometry={nodes.polySurface945_tree1_0.geometry}
         material={materials.PaletteMaterial001}
       />
       <mesh
+        raycast={() => null}
         geometry={nodes.polySurface946_tree2_0.geometry}
         material={materials.PaletteMaterial001}
       />
       <mesh
+        raycast={() => null}
         geometry={nodes.polySurface947_tree1_0.geometry}
         material={materials.PaletteMaterial001}
       />
       <mesh
+        raycast={() => null}
         geometry={nodes.polySurface948_tree_body_0.geometry}
         material={materials.PaletteMaterial001}
       />
       <mesh
+        raycast={() => null}
         geometry={nodes.polySurface949_tree_body_0.geometry}
         material={materials.PaletteMaterial001}
       />
       <mesh
+        raycast={() => null}
         geometry={nodes.pCube11_rocks1_0.geometry}
         material={materials.PaletteMaterial001}
       />
+      <IslandHitboxes enabled={hitboxesEnabled} onEnterArea={onEnterArea} />
     </a.group>
   );
 });

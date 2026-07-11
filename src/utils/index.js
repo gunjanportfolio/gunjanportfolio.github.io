@@ -17,9 +17,11 @@ export {
 export {
   advanceFlightProgress,
   computeCameraFollowTarget,
+  computeInteriorCameraTarget,
   easeInOutCubic,
   getGuideProgress,
   getHeadingY,
+  getHitboxSizeForArea,
   getWaypointForArea,
   localWaypointToWorld,
   sampleFlightPath,

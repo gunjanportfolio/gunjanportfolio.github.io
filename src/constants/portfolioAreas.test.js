@@ -33,6 +33,8 @@ describe("portfolioAreas", () => {
           z: expect.any(Number),
         })
       );
+      expect(area.hitboxSize).toHaveLength(3);
+      expect(area.interiorApproach).toBeGreaterThan(0);
     }
   });
 });

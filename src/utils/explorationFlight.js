@@ -134,3 +134,36 @@ export function advanceFlightProgress(currentProgress, deltaSeconds, durationSec
 export function areSameArea(areaId, otherAreaId) {
   return areaId === otherAreaId;
 }
+
+export const INTERIOR_CAMERA_DAMPING = 3.5;
+export const INTERIOR_CAMERA_HEIGHT_BOOST = 1.8;
+
+export function computeInteriorCameraTarget(
+  lookAt,
+  outdoorCameraPosition = DEFAULT_CAMERA_POSITION,
+  approach = 0.62,
+  heightBoost = INTERIOR_CAMERA_HEIGHT_BOOST
+) {
+  const clampedApproach = clamp01(approach);
+
+  return {
+    position: {
+      x:
+        outdoorCameraPosition.x +
+        (lookAt.x - outdoorCameraPosition.x) * clampedApproach,
+      y: Math.max(
+        lookAt.y + heightBoost,
+        outdoorCameraPosition.y + heightBoost * 0.5
+      ),
+      z:
+        outdoorCameraPosition.z +
+        (lookAt.z - outdoorCameraPosition.z) * clampedApproach,
+    },
+    lookAt: copyVector3(lookAt),
+  };
+}
+
+export function getHitboxSizeForArea(areaId) {
+  const area = getPortfolioAreaById(areaId);
+  return [...(area.hitboxSize || [7, 6, 7])];
+}

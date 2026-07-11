@@ -6,11 +6,13 @@ import {
   areSameArea,
   clamp01,
   computeCameraFollowTarget,
+  computeInteriorCameraTarget,
   copyVector3,
   dampVector3,
   easeInOutCubic,
   getGuideProgress,
   getHeadingY,
+  getHitboxSizeForArea,
   getWaypointForArea,
   localWaypointToWorld,
   sampleFlightPath,
@@ -165,5 +167,27 @@ describe("copyVector3", () => {
     const copy = copyVector3(source);
     copy.x = 9;
     expect(source.x).toBe(1);
+  });
+});
+
+describe("computeInteriorCameraTarget", () => {
+  it("moves the camera toward the look-at point", () => {
+    const target = computeInteriorCameraTarget(
+      { x: 10, y: 2, z: -40 },
+      { x: 0, y: 0, z: 5 },
+      0.5,
+      2
+    );
+
+    expect(target.position.x).toBeCloseTo(5);
+    expect(target.position.z).toBeCloseTo(-17.5);
+    expect(target.position.y).toBeGreaterThanOrEqual(4);
+    expect(target.lookAt).toEqual({ x: 10, y: 2, z: -40 });
+  });
+});
+
+describe("getHitboxSizeForArea", () => {
+  it("returns the configured hitbox size", () => {
+    expect(getHitboxSizeForArea(PORTFOLIO_AREA_IDS.ABOUT)).toEqual([7, 6, 7]);
   });
 });
