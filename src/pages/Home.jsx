@@ -2,8 +2,9 @@ import { Canvas } from "@react-three/fiber";
 import { Suspense, useEffect, useRef, useState } from "react";
 
 import sakura from "../assets/sakura.mp3";
-import { HomeInfo, Loader } from "../components";
 import { soundoff, soundon } from "../assets/icons";
+import ExploreControls from "../components/ExploreControls";
+import { HomeInfo, Loader } from "../components";
 import { Bird, Island, Plane, Sky } from "../models";
 import {
   getBiplaneScreenAdjustments,
@@ -14,6 +15,7 @@ const Home = () => {
   const audioRef = useRef(new Audio(sakura));
   audioRef.current.volume = 0.4;
   audioRef.current.loop = true;
+  const islandControlsRef = useRef(null);
 
   const [currentStage, setCurrentStage] = useState(1);
   const [isRotating, setIsRotating] = useState(false);
@@ -35,13 +37,27 @@ const Home = () => {
     setIsPlayingMusic((previousValue) => !previousValue);
   };
 
+  const handleRotateLeft = () => {
+    islandControlsRef.current?.rotateLeft();
+  };
+
+  const handleRotateRight = () => {
+    islandControlsRef.current?.rotateRight();
+  };
+
+  const handleStopRotate = () => {
+    islandControlsRef.current?.stopRotating();
+  };
+
   const biplane = getBiplaneScreenAdjustments(window.innerWidth);
   const island = getIslandScreenAdjustments(window.innerWidth);
 
   return (
     <section className="w-full h-screen relative" data-testid="home-page">
-      <div className="absolute top-28 left-0 right-0 z-10 flex items-center justify-center">
-        {currentStage && <HomeInfo currentStage={currentStage} />}
+      <div className="absolute top-28 left-0 right-0 z-10 flex items-center justify-center pointer-events-none">
+        <div className="pointer-events-auto">
+          {currentStage && <HomeInfo currentStage={currentStage} />}
+        </div>
       </div>
 
       <Canvas
@@ -49,6 +65,7 @@ const Home = () => {
           isRotating ? "cursor-grabbing" : "cursor-grab"
         }`}
         camera={{ near: 0.1, far: 1000 }}
+        style={{ touchAction: "none" }}
       >
         <Suspense fallback={<Loader />}>
           <directionalLight position={[1, 1, 1]} intensity={2} />
@@ -69,6 +86,7 @@ const Home = () => {
           <Bird />
           <Sky isRotating={isRotating} />
           <Island
+            ref={islandControlsRef}
             isRotating={isRotating}
             setIsRotating={setIsRotating}
             setCurrentStage={setCurrentStage}
@@ -85,7 +103,13 @@ const Home = () => {
         </Suspense>
       </Canvas>
 
-      <div className="absolute bottom-2 left-2">
+      <ExploreControls
+        onRotateLeft={handleRotateLeft}
+        onRotateRight={handleRotateRight}
+        onStopRotate={handleStopRotate}
+      />
+
+      <div className="absolute bottom-2 left-2 z-20">
         <img
           src={!isPlayingMusic ? soundoff : soundon}
           alt="jukebox"
