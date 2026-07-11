@@ -23,4 +23,16 @@ describe("portfolioAreas", () => {
     );
     expect(getPortfolioAreaById(999).key).toBe("home");
   });
+
+  it("defines a waypoint for every explore area", () => {
+    for (const area of PORTFOLIO_AREAS) {
+      expect(area.waypoint).toEqual(
+        expect.objectContaining({
+          x: expect.any(Number),
+          y: expect.any(Number),
+          z: expect.any(Number),
+        })
+      );
+    }
+  });
 });

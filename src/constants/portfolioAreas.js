@@ -11,24 +11,28 @@ export const PORTFOLIO_AREAS = [
     key: "home",
     label: "Home",
     targetRotation: 4.5,
+    waypoint: { x: 0, y: 2, z: 8 },
   },
   {
     id: PORTFOLIO_AREA_IDS.ABOUT,
     key: "about",
     label: "About",
     targetRotation: 2.5,
+    waypoint: { x: 8, y: 2.5, z: 2 },
   },
   {
     id: PORTFOLIO_AREA_IDS.PROJECTS,
     key: "projects",
     label: "Projects",
     targetRotation: 1.05,
+    waypoint: { x: 0, y: 3, z: -8 },
   },
   {
     id: PORTFOLIO_AREA_IDS.CONTACT,
     key: "contact",
     label: "Contact",
     targetRotation: 5.65,
+    waypoint: { x: -8, y: 2.5, z: 2 },
   },
 ];
 

@@ -10,8 +10,10 @@ import { useFrame, useThree } from "@react-three/fiber";
 
 import islandScene from "../assets/3d/island.glb";
 import {
+  getShortestRotationDelta,
   getStageFromIslandRotation,
   getTargetRotationForArea,
+  lerpIslandRotation,
 } from "../utils/islandInteraction";
 
 const ROTATION_DRAG_FACTOR = 0.02;
@@ -19,12 +21,16 @@ const KEYBOARD_ROTATION_STEP = 0.01 * Math.PI;
 const KEYBOARD_ROTATION_SPEED = 0.012;
 const CONTROL_ROTATION_STEP = 0.008 * Math.PI;
 const DAMPING_FACTOR = 0.95;
+const GOTO_ROTATION_LERP = 0.08;
+const GOTO_ROTATION_EPSILON = 0.002;
 
 export const Island = forwardRef(function Island(
   {
     isRotating,
     setIsRotating,
     setCurrentStage,
+    suppressStageUpdates = false,
+    onManualInteraction,
     currentFocusPoint: _currentFocusPoint,
     ...props
   },
@@ -37,15 +43,39 @@ export const Island = forwardRef(function Island(
   const lastX = useRef(0);
   const rotationSpeed = useRef(0);
   const isRotatingRef = useRef(isRotating);
+  const targetRotationRef = useRef(null);
+  const suppressStageUpdatesRef = useRef(suppressStageUpdates);
+  const onManualInteractionRef = useRef(onManualInteraction);
 
   useEffect(() => {
     isRotatingRef.current = isRotating;
   }, [isRotating]);
 
+  useEffect(() => {
+    suppressStageUpdatesRef.current = suppressStageUpdates;
+  }, [suppressStageUpdates]);
+
+  useEffect(() => {
+    onManualInteractionRef.current = onManualInteraction;
+  }, [onManualInteraction]);
+
+  const notifyManualInteraction = () => {
+    if (onManualInteractionRef.current) {
+      onManualInteractionRef.current();
+    }
+  };
+
+  const clearGoToTarget = () => {
+    targetRotationRef.current = null;
+  };
+
   const applyManualRotation = (rotationDelta, speed) => {
     if (!islandRef.current) {
       return;
     }
+
+    clearGoToTarget();
+    notifyManualInteraction();
 
     if (!isRotatingRef.current) {
       isRotatingRef.current = true;
@@ -76,6 +106,9 @@ export const Island = forwardRef(function Island(
       isRotatingRef.current = false;
       setIsRotating(false);
     },
+    cancelGoToArea: () => {
+      clearGoToTarget();
+    },
     goToArea: (areaId) => {
       if (!islandRef.current) {
         return;
@@ -84,8 +117,25 @@ export const Island = forwardRef(function Island(
       isRotatingRef.current = false;
       setIsRotating(false);
       rotationSpeed.current = 0;
-      islandRef.current.rotation.y = getTargetRotationForArea(areaId);
-      setCurrentStage(areaId);
+      targetRotationRef.current = getTargetRotationForArea(areaId);
+    },
+    getWorldPosition: () => {
+      if (!islandRef.current) {
+        return null;
+      }
+
+      return {
+        x: islandRef.current.position.x,
+        y: islandRef.current.position.y,
+        z: islandRef.current.position.z,
+      };
+    },
+    getRotationY: () => {
+      if (!islandRef.current) {
+        return null;
+      }
+
+      return islandRef.current.rotation.y;
     },
   }));
 
@@ -93,6 +143,8 @@ export const Island = forwardRef(function Island(
     const canvas = gl.domElement;
 
     const startRotation = (clientX) => {
+      clearGoToTarget();
+      notifyManualInteraction();
       isRotatingRef.current = true;
       setIsRotating(true);
       lastX.current = clientX;
@@ -231,7 +283,23 @@ export const Island = forwardRef(function Island(
       return;
     }
 
-    if (!isRotatingRef.current) {
+    if (targetRotationRef.current !== null) {
+      const nextRotation = lerpIslandRotation(
+        islandRef.current.rotation.y,
+        targetRotationRef.current,
+        GOTO_ROTATION_LERP
+      );
+      islandRef.current.rotation.y = nextRotation;
+
+      const remaining = Math.abs(
+        getShortestRotationDelta(nextRotation, targetRotationRef.current)
+      );
+
+      if (remaining < GOTO_ROTATION_EPSILON) {
+        islandRef.current.rotation.y = targetRotationRef.current;
+        targetRotationRef.current = null;
+      }
+    } else if (!isRotatingRef.current) {
       rotationSpeed.current *= DAMPING_FACTOR;
 
       if (Math.abs(rotationSpeed.current) < 0.001) {
@@ -241,8 +309,12 @@ export const Island = forwardRef(function Island(
       islandRef.current.rotation.y += rotationSpeed.current;
     }
 
-    const nextStage = getStageFromIslandRotation(islandRef.current.rotation.y);
-    setCurrentStage(nextStage);
+    if (!suppressStageUpdatesRef.current) {
+      const nextStage = getStageFromIslandRotation(
+        islandRef.current.rotation.y
+      );
+      setCurrentStage(nextStage);
+    }
   });
 
   return (
@@ -278,3 +350,5 @@ export const Island = forwardRef(function Island(
     </a.group>
   );
 });
+
+useGLTF.preload(islandScene);

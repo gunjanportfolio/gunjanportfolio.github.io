@@ -6,12 +6,13 @@ Live site: [https://gunjanportfolio.github.io](https://gunjanportfolio.github.io
 
 ## Features
 
-- 3D floating island scene (drag to rotate, stages with CTAs)
+- Guided 3D exploration: phoenix leads, biplane follows, camera tracks between island areas
+- Soft island rotation to Home / About / Projects / Contact waypoints
 - Animated plane, bird, and sky
 - Contact page with interactive fox ([Formcarry](https://formcarry.com))
 - About (skills + experience timeline) and Projects pages
 - Sakura ambient music toggle
-- GitHub Pages deploy via GitHub Actions
+- GitHub Pages deploy via GitHub Actions (static client-side WebGL — no backend required for flight)
 
 ## Quick start
 

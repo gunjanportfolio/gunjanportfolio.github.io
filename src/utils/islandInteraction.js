@@ -42,4 +42,24 @@ export function getTargetRotationForArea(areaId) {
   return area ? area.targetRotation : PORTFOLIO_AREAS[0].targetRotation;
 }
 
+export function getShortestRotationDelta(fromRotation, toRotation) {
+  const normalizedFrom = normalizeIslandRotation(fromRotation);
+  const normalizedTo = normalizeIslandRotation(toRotation);
+  let delta = normalizedTo - normalizedFrom;
+
+  if (delta > Math.PI) {
+    delta -= TWO_PI;
+  } else if (delta < -Math.PI) {
+    delta += TWO_PI;
+  }
+
+  return delta;
+}
+
+export function lerpIslandRotation(currentRotation, targetRotation, alpha) {
+  const clampedAlpha = Math.min(Math.max(alpha, 0), 1);
+  const delta = getShortestRotationDelta(currentRotation, targetRotation);
+  return currentRotation + delta * clampedAlpha;
+}
+
 export { PORTFOLIO_AREA_IDS, PORTFOLIO_AREAS };
