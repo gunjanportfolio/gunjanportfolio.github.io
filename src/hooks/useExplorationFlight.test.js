@@ -92,6 +92,69 @@ describe("useExplorationFlight", () => {
     expect(result.current.isFlying).toBe(false);
   });
 
+  it("allows the same area when allowSameArea is set", () => {
+    const { result } = renderHook(() => useExplorationFlight());
+
+    act(() => {
+      result.current.startFlight(
+        1,
+        { x: 0, y: 0, z: 0 },
+        { x: 1, y: 0, z: 0 }
+      );
+      result.current.tick(2);
+    });
+
+    let started;
+    act(() => {
+      started = result.current.startFlight(
+        1,
+        { x: 1, y: 0, z: 0 },
+        { x: 2, y: 0, z: 0 },
+        { allowSameArea: true, settleOnArrive: false }
+      );
+    });
+
+    expect(started).toBe(true);
+    expect(result.current.isFlying).toBe(true);
+  });
+
+  it("can skip outdoor camera settle on arrival", () => {
+    const { result } = renderHook(() => useExplorationFlight());
+
+    act(() => {
+      result.current.startFlight(
+        2,
+        { x: 0, y: 0, z: 0 },
+        { x: 10, y: 0, z: 0 },
+        { settleOnArrive: false }
+      );
+      result.current.tick(2);
+    });
+
+    expect(result.current.isFlying).toBe(false);
+    expect(result.current.isSettling).toBe(false);
+    expect(result.current.arrivedAreaId).toBe(2);
+  });
+
+  it("can cancel without entering settle", () => {
+    const { result } = renderHook(() => useExplorationFlight());
+
+    act(() => {
+      result.current.startFlight(
+        2,
+        { x: 0, y: 0, z: 0 },
+        { x: 10, y: 0, z: 0 }
+      );
+    });
+
+    act(() => {
+      result.current.cancelFlight({ settle: false });
+    });
+
+    expect(result.current.isFlying).toBe(false);
+    expect(result.current.isSettling).toBe(false);
+  });
+
   it("retargets mid-flight when a new area is requested", () => {
     const { result } = renderHook(() => useExplorationFlight());
 

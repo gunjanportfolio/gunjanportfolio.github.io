@@ -18,6 +18,7 @@ function createIdleFlightState() {
     from: { x: 0, y: 0, z: 0 },
     to: { x: 0, y: 0, z: 0 },
     targetAreaId: null,
+    settleOnArrive: true,
   };
 }
 
@@ -49,36 +50,45 @@ export default function useExplorationFlight() {
   const flightRef = useRef(createIdleFlightState());
   const currentAreaIdRef = useRef(null);
 
-  const startFlight = useCallback((areaId, fromPosition, toPosition) => {
-    if (
-      areSameArea(areaId, currentAreaIdRef.current) &&
-      !flightRef.current.active
-    ) {
-      return false;
-    }
+  const startFlight = useCallback(
+    (areaId, fromPosition, toPosition, options) => {
+      const allowSameArea = Boolean(options?.allowSameArea);
+      const settleOnArrive = options?.settleOnArrive !== false;
 
-    flightRef.current = {
-      active: true,
-      progress: 0,
-      from: copyVector3(fromPosition),
-      to: copyVector3(toPosition),
-      targetAreaId: areaId,
-    };
+      if (
+        !allowSameArea &&
+        areSameArea(areaId, currentAreaIdRef.current) &&
+        !flightRef.current.active
+      ) {
+        return false;
+      }
 
-    setIsFlying(true);
-    setIsSettling(false);
-    setTargetAreaId(areaId);
-    setArrivedAreaId(null);
-    return true;
-  }, []);
+      flightRef.current = {
+        active: true,
+        progress: 0,
+        from: copyVector3(fromPosition),
+        to: copyVector3(toPosition),
+        targetAreaId: areaId,
+        settleOnArrive,
+      };
 
-  const cancelFlight = useCallback(() => {
+      setIsFlying(true);
+      setIsSettling(false);
+      setTargetAreaId(areaId);
+      setArrivedAreaId(null);
+      return true;
+    },
+    []
+  );
+
+  const cancelFlight = useCallback((options) => {
     const wasActive = flightRef.current.active;
+    const shouldSettle = options?.settle !== false;
     flightRef.current = createIdleFlightState();
     setIsFlying(false);
     setTargetAreaId(null);
 
-    if (wasActive) {
+    if (wasActive && shouldSettle) {
       setIsSettling(true);
     }
 
@@ -121,10 +131,12 @@ export default function useExplorationFlight() {
 
     if (nextProgress >= 1) {
       const arrivedAreaIdValue = flightState.targetAreaId;
+      const shouldSettle = flightState.settleOnArrive;
+      const lookAt = copyVector3(flightState.to);
       flightRef.current = createIdleFlightState();
       currentAreaIdRef.current = arrivedAreaIdValue;
       setIsFlying(false);
-      setIsSettling(true);
+      setIsSettling(shouldSettle);
       setTargetAreaId(null);
       setArrivedAreaId(arrivedAreaIdValue);
 
@@ -133,7 +145,7 @@ export default function useExplorationFlight() {
         isActive: false,
         plane: planePose,
         bird: birdPose,
-        lookAt: copyVector3(flightState.to),
+        lookAt,
         targetAreaId: arrivedAreaIdValue,
       };
     }
