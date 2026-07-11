@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 
 import {
+  FLIGHT_ARC_HEIGHT,
+  FLIGHT_DURATION_SECONDS,
   advanceFlightProgress,
   areSameArea,
   copyVector3,
@@ -19,19 +21,24 @@ function createIdleFlightState() {
     to: { x: 0, y: 0, z: 0 },
     targetAreaId: null,
     settleOnArrive: true,
+    durationSeconds: FLIGHT_DURATION_SECONDS,
+    arcHeight: FLIGHT_ARC_HEIGHT,
   };
 }
 
 export function sampleFlightPose(flightState, progress) {
+  const arcHeight = flightState.arcHeight ?? FLIGHT_ARC_HEIGHT;
   const position = sampleFlightPath(
     flightState.from,
     flightState.to,
-    progress
+    progress,
+    arcHeight
   );
   const lookTarget = sampleFlightPath(
     flightState.from,
     flightState.to,
-    Math.min(progress + LOOK_AHEAD_PROGRESS, 1)
+    Math.min(progress + LOOK_AHEAD_PROGRESS, 1),
+    arcHeight
   );
   const headingY = getHeadingY(position, lookTarget);
 
@@ -54,6 +61,9 @@ export default function useExplorationFlight() {
     (areaId, fromPosition, toPosition, options) => {
       const allowSameArea = Boolean(options?.allowSameArea);
       const settleOnArrive = options?.settleOnArrive !== false;
+      const durationSeconds =
+        options?.durationSeconds ?? FLIGHT_DURATION_SECONDS;
+      const arcHeight = options?.arcHeight ?? FLIGHT_ARC_HEIGHT;
 
       if (
         !allowSameArea &&
@@ -70,6 +80,8 @@ export default function useExplorationFlight() {
         to: copyVector3(toPosition),
         targetAreaId: areaId,
         settleOnArrive,
+        durationSeconds,
+        arcHeight,
       };
 
       setIsFlying(true);
@@ -119,7 +131,8 @@ export default function useExplorationFlight() {
 
     const nextProgress = advanceFlightProgress(
       flightState.progress,
-      deltaSeconds
+      deltaSeconds,
+      flightState.durationSeconds
     );
     flightState.progress = nextProgress;
 

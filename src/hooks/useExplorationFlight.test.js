@@ -136,6 +136,32 @@ describe("useExplorationFlight", () => {
     expect(result.current.arrivedAreaId).toBe(2);
   });
 
+  it("supports a longer custom return flight duration", () => {
+    const { result } = renderHook(() => useExplorationFlight());
+
+    act(() => {
+      result.current.startFlight(
+        1,
+        { x: 10, y: 2, z: -20 },
+        { x: 0, y: -4, z: -4 },
+        {
+          allowSameArea: true,
+          durationSeconds: 2.4,
+          arcHeight: 2.5,
+        }
+      );
+    });
+
+    let tickResult;
+    act(() => {
+      tickResult = result.current.tick(0.6);
+    });
+
+    expect(tickResult.isActive).toBe(true);
+    expect(tickResult.arrived).toBe(false);
+    expect(result.current.flightRef.current.progress).toBeCloseTo(0.25);
+  });
+
   it("can cancel without entering settle", () => {
     const { result } = renderHook(() => useExplorationFlight());
 

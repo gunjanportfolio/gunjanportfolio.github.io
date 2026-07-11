@@ -16,6 +16,8 @@ import {
   getIslandScreenAdjustments,
 } from "../utils";
 import {
+  RETURN_FLIGHT_ARC_HEIGHT,
+  RETURN_FLIGHT_DURATION_SECONDS,
   getHeadingY,
   getWaypointForArea,
   localWaypointToWorld,
@@ -163,6 +165,7 @@ const Home = () => {
     if (isReturningHomeRef.current) {
       isReturningHomeRef.current = false;
       setIsExitingInterior(false);
+      setInteriorAreaId(null);
       setCreaturesControlled(false);
       planePoseRef.current = null;
       birdPoseRef.current = null;
@@ -268,7 +271,6 @@ const Home = () => {
     blockCanvasDragRef.current = false;
     pendingInteriorAreaIdRef.current = null;
     setIsInside(false);
-    setInteriorAreaId(null);
     setIsTravelingToInterior(false);
     setIsExitingInterior(true);
     isReturningHomeRef.current = true;
@@ -285,6 +287,8 @@ const Home = () => {
       {
         allowSameArea: true,
         settleOnArrive: true,
+        durationSeconds: RETURN_FLIGHT_DURATION_SECONDS,
+        arcHeight: RETURN_FLIGHT_ARC_HEIGHT,
       }
     );
 
@@ -294,6 +298,7 @@ const Home = () => {
     } else {
       isReturningHomeRef.current = false;
       setIsExitingInterior(false);
+      setInteriorAreaId(null);
       setCreaturesControlled(false);
     }
 
@@ -319,8 +324,12 @@ const Home = () => {
 
   return (
     <section className="w-full h-screen relative" data-testid="home-page">
-      {isInside && interiorAreaId ? (
-        <InteriorPanel areaId={interiorAreaId} onBack={handleBackToIsland} />
+      {interiorAreaId && (isInside || isExitingInterior) ? (
+        <InteriorPanel
+          areaId={interiorAreaId}
+          onBack={handleBackToIsland}
+          isFading={isExitingInterior}
+        />
       ) : null}
 
       {isTravelingToInterior ? (

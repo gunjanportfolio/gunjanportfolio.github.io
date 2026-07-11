@@ -40,4 +40,22 @@ describe("InteriorPanel", () => {
       screen.getByRole("link", { name: /explore full about/i })
     ).toBeInTheDocument();
   });
+
+  it("marks the panel as fading when returning home", () => {
+    render(
+      <MemoryRouter>
+        <InteriorPanel
+          areaId={PORTFOLIO_AREA_IDS.PROJECTS}
+          onBack={vi.fn()}
+          isFading
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId("interior-panel")).toHaveAttribute(
+      "data-fading",
+      "true"
+    );
+    expect(screen.queryByTestId("interior-back-button")).not.toBeInTheDocument();
+  });
 });

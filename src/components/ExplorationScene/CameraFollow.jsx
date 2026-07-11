@@ -3,12 +3,17 @@ import { useFrame, useThree } from "@react-three/fiber";
 
 import {
   CAMERA_FOLLOW_DAMPING,
+  CAMERA_LOOK_AT_DAMPING,
   CAMERA_SETTLE_DAMPING,
   DEFAULT_CAMERA_LOOK_AT,
   DEFAULT_CAMERA_POSITION,
   computeCameraFollowTarget,
+  copyVector3,
   dampVector3,
 } from "../../utils/explorationFlight";
+
+const SETTLE_COMPLETE_DISTANCE = 0.12;
+const SETTLE_MAX_FRAMES = 240;
 
 export default function CameraFollow({
   enabled = false,
@@ -20,6 +25,8 @@ export default function CameraFollow({
   const { camera } = useThree();
   const settleFramesRef = useRef(0);
   const onSettleCompleteRef = useRef(onSettleComplete);
+  const lookAtCurrentRef = useRef(copyVector3(DEFAULT_CAMERA_LOOK_AT));
+  const hasCompletedSettleRef = useRef(false);
 
   useEffect(() => {
     onSettleCompleteRef.current = onSettleComplete;
@@ -28,6 +35,7 @@ export default function CameraFollow({
   useEffect(() => {
     if (isSettling) {
       settleFramesRef.current = 0;
+      hasCompletedSettleRef.current = false;
     }
   }, [isSettling]);
 
@@ -55,15 +63,23 @@ export default function CameraFollow({
 
       camera.position.set(nextPosition.x, nextPosition.y, nextPosition.z);
 
-      const lookAtTarget = lookAtRef?.current;
-      if (lookAtTarget) {
-        camera.lookAt(lookAtTarget.x, lookAtTarget.y, lookAtTarget.z);
-      }
+      const lookAtTarget = lookAtRef?.current || DEFAULT_CAMERA_LOOK_AT;
+      lookAtCurrentRef.current = dampVector3(
+        lookAtCurrentRef.current,
+        lookAtTarget,
+        CAMERA_LOOK_AT_DAMPING,
+        delta
+      );
+      camera.lookAt(
+        lookAtCurrentRef.current.x,
+        lookAtCurrentRef.current.y,
+        lookAtCurrentRef.current.z
+      );
 
       return;
     }
 
-    if (!isSettling) {
+    if (!isSettling || hasCompletedSettleRef.current) {
       return;
     }
 
@@ -79,10 +95,17 @@ export default function CameraFollow({
     );
 
     camera.position.set(nextPosition.x, nextPosition.y, nextPosition.z);
+
+    lookAtCurrentRef.current = dampVector3(
+      lookAtCurrentRef.current,
+      DEFAULT_CAMERA_LOOK_AT,
+      CAMERA_LOOK_AT_DAMPING,
+      delta
+    );
     camera.lookAt(
-      DEFAULT_CAMERA_LOOK_AT.x,
-      DEFAULT_CAMERA_LOOK_AT.y,
-      DEFAULT_CAMERA_LOOK_AT.z
+      lookAtCurrentRef.current.x,
+      lookAtCurrentRef.current.y,
+      lookAtCurrentRef.current.z
     );
 
     const distanceToDefault = Math.hypot(
@@ -93,7 +116,23 @@ export default function CameraFollow({
 
     settleFramesRef.current += 1;
 
-    if (distanceToDefault < 0.05 || settleFramesRef.current > 180) {
+    if (
+      distanceToDefault < SETTLE_COMPLETE_DISTANCE ||
+      settleFramesRef.current > SETTLE_MAX_FRAMES
+    ) {
+      hasCompletedSettleRef.current = true;
+      camera.position.set(
+        DEFAULT_CAMERA_POSITION.x,
+        DEFAULT_CAMERA_POSITION.y,
+        DEFAULT_CAMERA_POSITION.z
+      );
+      lookAtCurrentRef.current = copyVector3(DEFAULT_CAMERA_LOOK_AT);
+      camera.lookAt(
+        DEFAULT_CAMERA_LOOK_AT.x,
+        DEFAULT_CAMERA_LOOK_AT.y,
+        DEFAULT_CAMERA_LOOK_AT.z
+      );
+
       if (onSettleCompleteRef.current) {
         onSettleCompleteRef.current();
       }

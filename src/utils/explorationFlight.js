@@ -1,12 +1,16 @@
 import { getPortfolioAreaById } from "../constants/portfolioAreas";
 
 export const FLIGHT_DURATION_SECONDS = 1.5;
+export const RETURN_FLIGHT_DURATION_SECONDS = 2.4;
 export const BIRD_LEAD_OFFSET = 0.18;
 export const FLIGHT_ARC_HEIGHT = 4;
+export const RETURN_FLIGHT_ARC_HEIGHT = 2.5;
 export const CAMERA_FOLLOW_BEHIND = 10;
 export const CAMERA_FOLLOW_ABOVE = 4;
 export const CAMERA_FOLLOW_DAMPING = 4;
-export const CAMERA_SETTLE_DAMPING = 2.5;
+export const CAMERA_SETTLE_DAMPING = 1.35;
+export const CAMERA_LOOK_AT_DAMPING = 2.2;
+export const PANEL_FADE_MS = 700;
 
 export const DEFAULT_CAMERA_POSITION = { x: 0, y: 0, z: 5 };
 export const DEFAULT_CAMERA_LOOK_AT = { x: 0, y: 0, z: -40 };
