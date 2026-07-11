@@ -78,12 +78,13 @@ export const skills = skillCategories.flatMap((category) =>
 
 export const experiences = [
   {
-    title: "Data Analyst",
+    title: "Data Analyst & Treatment Coordinator",
     company_name: "Happy Kids Dental Clinic",
     icon: logo,
     iconBg: "#accbe1",
     date: "July 2026 - Present",
     points: [
+      "Working as Data Analyst and Treatment Coordinator supporting clinic operations and patient care coordination.",
       "Analyzing clinic operational and patient data to support decision-making.",
       "Building reporting and dashboards for stakeholders across clinical and admin teams.",
       "Identifying process improvements through data-driven insights.",

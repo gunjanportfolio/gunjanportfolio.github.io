@@ -10,7 +10,7 @@ import {
 describe("portfolio content", () => {
   it("lists current and previous data analyst roles first", () => {
     expect(experiences[0]).toMatchObject({
-      title: "Data Analyst",
+      title: "Data Analyst & Treatment Coordinator",
       company_name: "Happy Kids Dental Clinic",
       date: "July 2026 - Present",
     });
