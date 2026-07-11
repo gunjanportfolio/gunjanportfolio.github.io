@@ -20,6 +20,7 @@ describe("InteriorPanel", () => {
     );
 
     expect(screen.getByTestId("interior-panel")).toBeInTheDocument();
+    expect(screen.getByTestId("interior-card")).toBeInTheDocument();
     expect(screen.getByTestId("home-stage-1")).toHaveTextContent(SITE_NAME);
     fireEvent.click(screen.getByTestId("interior-back-button"));
     expect(onBack).toHaveBeenCalledTimes(1);

@@ -5,11 +5,12 @@ import ExploreControls from "../components/ExploreControls";
 import {
   CameraFollow,
   FlightDriver,
+  InteriorCamera,
 } from "../components/ExplorationScene";
 import InteriorPanel from "../components/InteriorPanel";
 import { Loader } from "../components";
 import useExplorationFlight from "../hooks/useExplorationFlight";
-import { Bird, Island, Plane, Sky } from "../models";
+import { Bird, BIRD_AMBIENT_START, Island, Plane, Sky } from "../models";
 import { PORTFOLIO_AREA_IDS } from "../constants/portfolioAreas";
 import {
   getBiplaneScreenAdjustments,
@@ -18,6 +19,8 @@ import {
 import {
   RETURN_FLIGHT_ARC_HEIGHT,
   RETURN_FLIGHT_DURATION_SECONDS,
+  computeInteriorBirdViewingScene,
+  copyVector3,
   getHeadingY,
   getWaypointForArea,
   localWaypointToWorld,
@@ -44,21 +47,21 @@ function toScaleObject(scaleArray) {
 
 const Home = () => {
   const islandControlsRef = useRef(null);
-  const planePoseRef = useRef(null);
   const birdPoseRef = useRef(null);
   const lookAtRef = useRef(null);
-  const lastPlanePositionRef = useRef(null);
+  const lastBirdPositionRef = useRef(null);
   const blockCanvasDragRef = useRef(false);
   const pendingInteriorAreaIdRef = useRef(null);
   const isReturningHomeRef = useRef(false);
 
   const [currentStage, setCurrentStage] = useState(1);
   const [isRotating, setIsRotating] = useState(false);
-  const [creaturesControlled, setCreaturesControlled] = useState(false);
+  const [birdControlled, setBirdControlled] = useState(false);
   const [isInside, setIsInside] = useState(false);
   const [isExitingInterior, setIsExitingInterior] = useState(false);
   const [interiorAreaId, setInteriorAreaId] = useState(null);
   const [isTravelingToInterior, setIsTravelingToInterior] = useState(false);
+  const [interiorView, setInteriorView] = useState(null);
 
   const {
     isFlying,
@@ -89,24 +92,33 @@ const Home = () => {
     [island.position, island.scale]
   );
 
-  const getPlaneStartPosition = useCallback(() => {
+  const getBirdStartPosition = useCallback(() => {
     return (
-      planePoseRef.current?.position ||
-      lastPlanePositionRef.current ||
-      toPositionObject(biplane.position)
+      birdPoseRef.current?.position ||
+      lastBirdPositionRef.current ||
+      copyVector3(BIRD_AMBIENT_START)
     );
-  }, [biplane.position]);
+  }, []);
 
-  const seedFlightPoses = useCallback((fromPosition, destination) => {
+  const seedBirdFlight = useCallback((fromPosition, destination) => {
     const startHeadingY = getHeadingY(fromPosition, destination);
-    const startPose = {
+    birdPoseRef.current = {
       position: fromPosition,
       headingY: startHeadingY,
     };
-    planePoseRef.current = startPose;
-    birdPoseRef.current = startPose;
     lookAtRef.current = destination;
-    lastPlanePositionRef.current = fromPosition;
+    lastBirdPositionRef.current = fromPosition;
+  }, []);
+
+  const parkBirdFacingCard = useCallback((arrivedPosition) => {
+    const viewingScene = computeInteriorBirdViewingScene(arrivedPosition);
+    birdPoseRef.current = viewingScene.birdPose;
+    lastBirdPositionRef.current = viewingScene.birdPose.position;
+    lookAtRef.current = viewingScene.cameraLookAt;
+    setInteriorView({
+      cameraPosition: viewingScene.cameraPosition,
+      cameraLookAt: viewingScene.cameraLookAt,
+    });
   }, []);
 
   const handleRotateLeft = () => {
@@ -166,25 +178,21 @@ const Home = () => {
       isReturningHomeRef.current = false;
       setIsExitingInterior(false);
       setInteriorAreaId(null);
-      setCreaturesControlled(false);
-      planePoseRef.current = null;
+      setInteriorView(null);
+      setBirdControlled(false);
       birdPoseRef.current = null;
-      lastPlanePositionRef.current = null;
+      lastBirdPositionRef.current = null;
     }
   }, [clearSettling]);
 
   const handleFlightArrived = useCallback(
-    (areaId, planePose, birdPose) => {
-      if (planePose) {
-        planePoseRef.current = planePose;
-        lastPlanePositionRef.current = planePose.position;
-      }
-
+    (areaId, birdPose) => {
       if (birdPose) {
         birdPoseRef.current = birdPose;
+        lastBirdPositionRef.current = birdPose.position;
       }
 
-      setCreaturesControlled(true);
+      setBirdControlled(true);
 
       if (
         pendingInteriorAreaIdRef.current !== null &&
@@ -192,6 +200,7 @@ const Home = () => {
       ) {
         pendingInteriorAreaIdRef.current = null;
         setIsTravelingToInterior(false);
+        parkBirdFacingCard(birdPose?.position || getWorldWaypoint(areaId));
         setInteriorAreaId(areaId);
         setCurrentStage(areaId);
         markArrivedAtCurrentArea(areaId);
@@ -205,7 +214,12 @@ const Home = () => {
         markArrivedAtCurrentArea(RETURN_FLIGHT_AREA_ID);
       }
     },
-    [clearSettling, markArrivedAtCurrentArea]
+    [
+      clearSettling,
+      getWorldWaypoint,
+      markArrivedAtCurrentArea,
+      parkBirdFacingCard,
+    ]
   );
 
   const enterInterior = useCallback(
@@ -217,9 +231,10 @@ const Home = () => {
       setIsExitingInterior(false);
       setIsInside(false);
       setInteriorAreaId(null);
+      setInteriorView(null);
 
       const destination = getWorldWaypoint(areaId);
-      const fromPosition = getPlaneStartPosition();
+      const fromPosition = getBirdStartPosition();
       const started = startFlight(areaId, fromPosition, destination, {
         allowSameArea: true,
         settleOnArrive: false,
@@ -229,8 +244,8 @@ const Home = () => {
         return;
       }
 
-      seedFlightPoses(fromPosition, destination);
-      setCreaturesControlled(true);
+      seedBirdFlight(fromPosition, destination);
+      setBirdControlled(true);
       pendingInteriorAreaIdRef.current = areaId;
       setIsTravelingToInterior(true);
       setCurrentStage(areaId);
@@ -239,9 +254,9 @@ const Home = () => {
     [
       cancelFlight,
       clearSettling,
-      getPlaneStartPosition,
+      getBirdStartPosition,
       getWorldWaypoint,
-      seedFlightPoses,
+      seedBirdFlight,
       startFlight,
     ]
   );
@@ -273,17 +288,18 @@ const Home = () => {
     setIsInside(false);
     setIsTravelingToInterior(false);
     setIsExitingInterior(true);
+    setInteriorView(null);
     isReturningHomeRef.current = true;
 
-    const homePad = toPositionObject(biplane.position);
-    const fromPosition = getPlaneStartPosition();
+    const birdHome = copyVector3(BIRD_AMBIENT_START);
+    const fromPosition = getBirdStartPosition();
     cancelFlight({ settle: false });
     clearSettling();
 
     const started = startFlight(
       RETURN_FLIGHT_AREA_ID,
       fromPosition,
-      homePad,
+      birdHome,
       {
         allowSameArea: true,
         settleOnArrive: true,
@@ -293,34 +309,37 @@ const Home = () => {
     );
 
     if (started) {
-      seedFlightPoses(fromPosition, homePad);
-      setCreaturesControlled(true);
+      seedBirdFlight(fromPosition, birdHome);
+      setBirdControlled(true);
     } else {
       isReturningHomeRef.current = false;
       setIsExitingInterior(false);
       setInteriorAreaId(null);
-      setCreaturesControlled(false);
+      setBirdControlled(false);
     }
 
     setCurrentStage(RETURN_FLIGHT_AREA_ID);
     markArrivedAtCurrentArea(RETURN_FLIGHT_AREA_ID);
     islandControlsRef.current?.goToArea(RETURN_FLIGHT_AREA_ID);
   }, [
-    biplane.position,
     cancelFlight,
     clearSettling,
-    getPlaneStartPosition,
+    getBirdStartPosition,
     isInside,
     isTravelingToInterior,
     markArrivedAtCurrentArea,
-    seedFlightPoses,
+    seedBirdFlight,
     startFlight,
   ]);
 
   const outdoorControlsVisible =
     !isInside && !isExitingInterior && !isTravelingToInterior;
-  const shouldFollowPlane =
-    isFlying || isTravelingToInterior || (isInside && !isExitingInterior);
+  const showBiplane = outdoorControlsVisible;
+  const showIslandBackdrop =
+    !isInside && !isExitingInterior;
+  const shouldFollowBird = isFlying || isTravelingToInterior;
+  const shouldUseInteriorCamera =
+    Boolean(interiorView) && isInside && !isExitingInterior;
 
   return (
     <section className="w-full h-screen relative" data-testid="home-page">
@@ -338,7 +357,7 @@ const Home = () => {
             className="rounded-lg bg-white/90 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm"
             data-testid="traveling-hint"
           >
-            Flying to this island area…
+            The phoenix is flying into this island area…
           </p>
         </div>
       ) : null}
@@ -374,60 +393,67 @@ const Home = () => {
 
           <FlightDriver
             tick={tick}
-            planePoseRef={planePoseRef}
             birdPoseRef={birdPoseRef}
             lookAtRef={lookAtRef}
             onArrived={handleFlightArrived}
           />
           <CameraFollow
-            enabled={shouldFollowPlane}
+            enabled={shouldFollowBird}
             isSettling={isSettling && isExitingInterior}
-            planePoseRef={planePoseRef}
+            followPoseRef={birdPoseRef}
             lookAtRef={lookAtRef}
             onSettleComplete={handleSettleComplete}
           />
+          <InteriorCamera
+            active={shouldUseInteriorCamera}
+            isExiting={false}
+            targetPosition={interiorView?.cameraPosition}
+            targetLookAt={interiorView?.cameraLookAt}
+          />
 
-          <Bird isControlled={creaturesControlled} poseRef={birdPoseRef} />
+          <Bird isControlled={birdControlled} poseRef={birdPoseRef} />
           <Sky isRotating={isRotating || isFlying} />
-          <Island
-            ref={islandControlsRef}
-            isRotating={isRotating}
-            setIsRotating={setIsRotating}
-            setCurrentStage={handleStageChange}
-            suppressStageUpdates={
-              isFlying ||
-              isInside ||
-              isExitingInterior ||
-              isTravelingToInterior
-            }
-            rotationEnabled={
-              !isInside &&
-              !isExitingInterior &&
-              !isTravelingToInterior &&
-              !isFlying
-            }
-            hitboxesEnabled={
-              !isInside &&
-              !isExitingInterior &&
-              !isTravelingToInterior &&
-              !isFlying
-            }
-            onManualInteraction={handleManualInteraction}
-            onEnterArea={handleEnterArea}
-            blockCanvasDragRef={blockCanvasDragRef}
-            position={island.position}
-            rotation={[0.1, 4.7077, 0]}
-            scale={island.scale}
-          />
-          <Plane
-            isRotating={isRotating}
-            isFlying={isFlying || isTravelingToInterior}
-            isControlled={creaturesControlled}
-            poseRef={planePoseRef}
-            position={biplane.position}
-            rotation={[0, 20.1, 0]}
-            scale={biplane.scale}
-          />
+          <group visible={showIslandBackdrop}>
+            <Island
+              ref={islandControlsRef}
+              isRotating={isRotating}
+              setIsRotating={setIsRotating}
+              setCurrentStage={handleStageChange}
+              suppressStageUpdates={
+                isFlying ||
+                isInside ||
+                isExitingInterior ||
+                isTravelingToInterior
+              }
+              rotationEnabled={
+                !isInside &&
+                !isExitingInterior &&
+                !isTravelingToInterior &&
+                !isFlying
+              }
+              hitboxesEnabled={
+                !isInside &&
+                !isExitingInterior &&
+                !isTravelingToInterior &&
+                !isFlying
+              }
+              onManualInteraction={handleManualInteraction}
+              onEnterArea={handleEnterArea}
+              blockCanvasDragRef={blockCanvasDragRef}
+              position={island.position}
+              rotation={[0.1, 4.7077, 0]}
+              scale={island.scale}
+            />
+          </group>
+          {showBiplane ? (
+            <Plane
+              isRotating={isRotating}
+              isFlying={false}
+              position={biplane.position}
+              rotation={[0, 20.1, 0]}
+              scale={biplane.scale}
+            />
+          ) : null}
         </Suspense>
       </Canvas>
 

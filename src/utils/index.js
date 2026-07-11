@@ -17,6 +17,7 @@ export {
 export {
   advanceFlightProgress,
   computeCameraFollowTarget,
+  computeInteriorBirdViewingScene,
   computeInteriorCameraTarget,
   easeInOutCubic,
   getGuideProgress,

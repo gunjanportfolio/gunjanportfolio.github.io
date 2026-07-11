@@ -4,7 +4,12 @@ import { useAnimations, useGLTF } from "@react-three/drei";
 
 import birdScene from "../assets/3d/bird.glb";
 
-const AMBIENT_START_POSITION = [-5, 2, 1];
+export const BIRD_AMBIENT_START = { x: -5, y: 2, z: 1 };
+const AMBIENT_START_POSITION = [
+  BIRD_AMBIENT_START.x,
+  BIRD_AMBIENT_START.y,
+  BIRD_AMBIENT_START.z,
+];
 const BIRD_SCALE = [0.003, 0.003, 0.003];
 
 export function Bird({ isControlled = false, poseRef }) {

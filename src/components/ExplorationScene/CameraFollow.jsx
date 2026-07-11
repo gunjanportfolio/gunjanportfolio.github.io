@@ -18,7 +18,7 @@ const SETTLE_MAX_FRAMES = 240;
 export default function CameraFollow({
   enabled = false,
   isSettling = false,
-  planePoseRef,
+  followPoseRef,
   lookAtRef,
   onSettleComplete,
 }) {
@@ -44,11 +44,11 @@ export default function CameraFollow({
       return;
     }
 
-    if (enabled && planePoseRef?.current?.position) {
-      const planePose = planePoseRef.current;
+    if (enabled && followPoseRef?.current?.position) {
+      const followPose = followPoseRef.current;
       const followTarget = computeCameraFollowTarget(
-        planePose.position,
-        planePose.headingY
+        followPose.position,
+        followPose.headingY
       );
       const nextPosition = dampVector3(
         {

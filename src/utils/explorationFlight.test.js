@@ -6,6 +6,7 @@ import {
   areSameArea,
   clamp01,
   computeCameraFollowTarget,
+  computeInteriorBirdViewingScene,
   computeInteriorCameraTarget,
   copyVector3,
   dampVector3,
@@ -183,6 +184,20 @@ describe("computeInteriorCameraTarget", () => {
     expect(target.position.z).toBeCloseTo(-17.5);
     expect(target.position.y).toBeGreaterThanOrEqual(4);
     expect(target.lookAt).toEqual({ x: 10, y: 2, z: -40 });
+  });
+});
+
+describe("computeInteriorBirdViewingScene", () => {
+  it("places the bird below the look target and facing the camera", () => {
+    const scene = computeInteriorBirdViewingScene({ x: 4, y: 1, z: -20 });
+
+    expect(scene.birdPose.position.x).toBe(4);
+    expect(scene.birdPose.position.y).toBeGreaterThan(1);
+    expect(scene.cameraLookAt.y).toBeGreaterThan(scene.birdPose.position.y);
+    expect(scene.cameraPosition.z).toBeGreaterThan(scene.birdPose.position.z);
+    expect(scene.birdPose.headingY).toBeCloseTo(
+      getHeadingY(scene.birdPose.position, scene.cameraPosition)
+    );
   });
 });
 

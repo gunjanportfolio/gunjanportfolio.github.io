@@ -141,6 +141,43 @@ export function areSameArea(areaId, otherAreaId) {
 
 export const INTERIOR_CAMERA_DAMPING = 3.5;
 export const INTERIOR_CAMERA_HEIGHT_BOOST = 1.8;
+export const INTERIOR_BIRD_CAMERA_DISTANCE = 4.2;
+export const INTERIOR_BIRD_CAMERA_HEIGHT = 1.55;
+export const INTERIOR_BIRD_LOOK_ABOVE = 1.85;
+export const INTERIOR_BIRD_HOVER_LIFT = 0.85;
+
+/**
+ * Frames the phoenix under the interior card: bird in the lower view,
+ * facing the camera (toward the card), camera looking slightly above the bird.
+ */
+export function computeInteriorBirdViewingScene(waypointPosition) {
+  const birdPosition = {
+    x: waypointPosition.x,
+    y: waypointPosition.y + INTERIOR_BIRD_HOVER_LIFT,
+    z: waypointPosition.z,
+  };
+
+  const cameraPosition = {
+    x: birdPosition.x,
+    y: birdPosition.y + INTERIOR_BIRD_CAMERA_HEIGHT,
+    z: birdPosition.z + INTERIOR_BIRD_CAMERA_DISTANCE,
+  };
+
+  const cameraLookAt = {
+    x: birdPosition.x,
+    y: birdPosition.y + INTERIOR_BIRD_LOOK_ABOVE,
+    z: birdPosition.z,
+  };
+
+  return {
+    birdPose: {
+      position: birdPosition,
+      headingY: getHeadingY(birdPosition, cameraPosition),
+    },
+    cameraPosition,
+    cameraLookAt,
+  };
+}
 
 export function computeInteriorCameraTarget(
   lookAt,

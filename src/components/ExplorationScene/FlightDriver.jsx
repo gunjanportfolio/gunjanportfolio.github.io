@@ -2,11 +2,11 @@ import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 
 /**
- * Advances exploration flight each frame and writes poses into shared refs.
+ * Advances exploration flight and drives the phoenix (bird) traveler only.
+ * The biplane stays parked and is not updated here.
  */
 export default function FlightDriver({
   tick,
-  planePoseRef,
   birdPoseRef,
   lookAtRef,
   onArrived,
@@ -25,12 +25,9 @@ export default function FlightDriver({
   useFrame((_, delta) => {
     const result = tickRef.current(delta);
 
+    // Use the main path sample for the bird so it flies into the section.
     if (result.plane) {
-      planePoseRef.current = result.plane;
-    }
-
-    if (result.bird) {
-      birdPoseRef.current = result.bird;
+      birdPoseRef.current = result.plane;
     }
 
     if (result.lookAt) {
@@ -38,7 +35,7 @@ export default function FlightDriver({
     }
 
     if (result.arrived && onArrivedRef.current) {
-      onArrivedRef.current(result.targetAreaId, result.plane, result.bird);
+      onArrivedRef.current(result.targetAreaId, result.plane);
     }
   });
 

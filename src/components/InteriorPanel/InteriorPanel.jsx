@@ -9,11 +9,12 @@ export default function InteriorPanel({ areaId, onBack, isFading = false }) {
       data-testid="interior-panel"
       data-fading={isFading ? "true" : "false"}
     >
-      <div className="pointer-events-none flex flex-1 items-start justify-center px-4 pt-24 sm:pt-28">
+      <div className="pointer-events-none flex flex-1 items-start justify-center px-4 pt-20 sm:pt-24 pb-[38vh]">
         <div
           className={`pointer-events-auto w-full max-w-2xl ${
             isFading ? "pointer-events-none" : ""
           }`}
+          data-testid="interior-card"
         >
           <HomeInfo currentStage={areaId} onBack={isFading ? undefined : onBack} />
         </div>
