@@ -6,5 +6,7 @@ export const SITE_BIO =
   "Data Analyst and Treatment Coordinator currently working at Happy Kids Dental Clinic, with Business Analyst experience across healthcare and banking. Skilled in SQL, Python, Power BI/Tableau, requirements gathering, and AI-driven analytics.";
 export const CONTACT_TO_NAME = "Gunjan Bandekar";
 export const CONTACT_TO_EMAIL = "gunjanbandekar20@gmail.com";
+export const SITE_LINKEDIN_URL = "https://www.linkedin.com/in/gunjanbandekar1320/";
+export const FORMCARRY_ENDPOINT = "https://formcarry.com/s/BO_V3AU0Jro";
 export const SITE_EDUCATION =
   "MSc. Management of Business Information Technology, University of Greenwich · Sep 2025";

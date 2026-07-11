@@ -8,7 +8,7 @@ Live site: [https://gunjanportfolio.github.io](https://gunjanportfolio.github.io
 
 - 3D floating island scene (drag to rotate, stages with CTAs)
 - Animated plane, bird, and sky
-- Contact page with interactive fox (EmailJS)
+- Contact page with interactive fox ([Formcarry](https://formcarry.com))
 - About (skills + experience timeline) and Projects pages
 - Sakura ambient music toggle
 - GitHub Pages deploy via GitHub Actions
@@ -16,12 +16,11 @@ Live site: [https://gunjanportfolio.github.io](https://gunjanportfolio.github.io
 ## Quick start
 
 ```bash
-cp .env.example .env
 npm install
 npm run dev
 ```
 
-Edit `src/config/site.js` for name, bio, and contact recipient. Update `src/constants/index.js` for skills, experience, projects, and social links.
+Edit `src/config/site.js` for name, bio, LinkedIn, Formcarry endpoint, and email. Update `src/constants/index.js` for skills, experience, projects, and social links.
 
 ## Scripts
 
@@ -41,10 +40,6 @@ This project deploys to the user site repo [`gunjanportfolio/gunjanportfolio.git
 
 1. Push to `main` on that repository.
 2. **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-3. Add EmailJS secrets (optional, for contact form):
-   - `VITE_APP_EMAILJS_SERVICE_ID`
-   - `VITE_APP_EMAILJS_TEMPLATE_ID`
-   - `VITE_APP_EMAILJS_PUBLIC_KEY`
 
 Site URL: `https://gunjanportfolio.github.io`
 
@@ -54,6 +49,6 @@ Site URL: `https://gunjanportfolio.github.io`
 VITE_BASE_PATH=/ npm run deploy
 ```
 
-## EmailJS
+## Contact form (Formcarry)
 
-Create a service/template at [EmailJS](https://www.emailjs.com/), put keys in `.env` locally, and mirror them as GitHub Actions secrets for production.
+The contact form posts to [Formcarry](https://formcarry.com/s/BO_V3AU0Jro). Endpoint is configured in `src/config/site.js` as `FORMCARRY_ENDPOINT`.

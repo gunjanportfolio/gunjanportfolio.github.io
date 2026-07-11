@@ -1,4 +1,6 @@
-export function buildContactEmailPayload(form, { toName, toEmail }) {
+import { FORMCARRY_ENDPOINT } from "../config/site";
+
+export function buildFormcarryPayload(form) {
   if (!form || typeof form !== "object") {
     throw new Error("Contact form data is required");
   }
@@ -15,17 +17,38 @@ export function buildContactEmailPayload(form, { toName, toEmail }) {
     throw new Error("Email is required");
   }
 
-  if (!toName || !toEmail) {
-    throw new Error("Recipient configuration is required");
+  if (!message) {
+    throw new Error("Message is required");
   }
 
   return {
-    from_name: name,
-    to_name: toName,
-    from_email: email,
-    to_email: toEmail,
+    name,
+    email,
     message,
   };
+}
+
+export async function submitContactForm(form, endpoint = FORMCARRY_ENDPOINT) {
+  if (!endpoint) {
+    throw new Error("Form endpoint is not configured");
+  }
+
+  const payload = buildFormcarryPayload(form);
+
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to send message");
+  }
+
+  return response.json().catch(() => ({ success: true }));
 }
 
 export function getIslandScreenAdjustments(viewportWidth) {

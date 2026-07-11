@@ -1,61 +1,119 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
 import {
-  buildContactEmailPayload,
+  buildFormcarryPayload,
   getBiplaneScreenAdjustments,
   getIslandScreenAdjustments,
-} from "../utils/contactEmail";
+  submitContactForm,
+} from "./contactEmail";
 
-describe("buildContactEmailPayload", () => {
+describe("buildFormcarryPayload", () => {
   it("builds a valid payload from form data", () => {
-    const payload = buildContactEmailPayload(
-      { name: "  Ada  ", email: " ada@example.com ", message: " Hello " },
-      { toName: "Gunjan", toEmail: "hello@example.com" }
-    );
+    const payload = buildFormcarryPayload({
+      name: "  Ada  ",
+      email: " ada@example.com ",
+      message: " Hello ",
+    });
 
     expect(payload).toEqual({
-      from_name: "Ada",
-      to_name: "Gunjan",
-      from_email: "ada@example.com",
-      to_email: "hello@example.com",
+      name: "Ada",
+      email: "ada@example.com",
       message: "Hello",
     });
   });
 
   it("throws when form is missing", () => {
-    expect(() =>
-      buildContactEmailPayload(null, {
-        toName: "Gunjan",
-        toEmail: "hello@example.com",
-      })
-    ).toThrow("Contact form data is required");
+    expect(() => buildFormcarryPayload(null)).toThrow(
+      "Contact form data is required"
+    );
   });
 
   it("throws when name is empty", () => {
     expect(() =>
-      buildContactEmailPayload(
-        { name: "   ", email: "a@b.com", message: "hi" },
-        { toName: "Gunjan", toEmail: "hello@example.com" }
-      )
+      buildFormcarryPayload({
+        name: "   ",
+        email: "a@b.com",
+        message: "hi",
+      })
     ).toThrow("Name is required");
   });
 
   it("throws when email is empty", () => {
     expect(() =>
-      buildContactEmailPayload(
-        { name: "Ada", email: "", message: "hi" },
-        { toName: "Gunjan", toEmail: "hello@example.com" }
-      )
+      buildFormcarryPayload({
+        name: "Ada",
+        email: "",
+        message: "hi",
+      })
     ).toThrow("Email is required");
   });
 
-  it("throws when recipient config is incomplete", () => {
+  it("throws when message is empty", () => {
     expect(() =>
-      buildContactEmailPayload(
-        { name: "Ada", email: "a@b.com", message: "hi" },
-        { toName: "", toEmail: "hello@example.com" }
+      buildFormcarryPayload({
+        name: "Ada",
+        email: "a@b.com",
+        message: "  ",
+      })
+    ).toThrow("Message is required");
+  });
+});
+
+describe("submitContactForm", () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ code: 200 }),
+        })
       )
-    ).toThrow("Recipient configuration is required");
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("posts JSON payload to Formcarry", async () => {
+    await submitContactForm(
+      { name: "Ada", email: "ada@example.com", message: "Hello" },
+      "https://formcarry.com/s/test"
+    );
+
+    expect(fetch).toHaveBeenCalledWith("https://formcarry.com/s/test", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Ada",
+        email: "ada@example.com",
+        message: "Hello",
+      }),
+    });
+  });
+
+  it("throws when the endpoint responds with an error", async () => {
+    fetch.mockResolvedValueOnce({ ok: false });
+
+    await expect(
+      submitContactForm(
+        { name: "Ada", email: "ada@example.com", message: "Hello" },
+        "https://formcarry.com/s/test"
+      )
+    ).rejects.toThrow("Failed to send message");
+  });
+
+  it("throws when endpoint is missing", async () => {
+    await expect(
+      submitContactForm(
+        { name: "Ada", email: "ada@example.com", message: "Hello" },
+        ""
+      )
+    ).rejects.toThrow("Form endpoint is not configured");
   });
 });
 
