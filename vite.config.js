@@ -45,6 +45,7 @@ export default defineConfig({
         "src/components/Activities/index.js",
         "src/components/DownloadCvButton/index.js",
         "src/components/HomeSocialLinks/index.js",
+        "src/components/AboutProfilePhoto/index.js",
         "src/utils/index.js",
         "src/test/**",
       ],

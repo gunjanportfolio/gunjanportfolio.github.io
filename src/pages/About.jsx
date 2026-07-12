@@ -4,6 +4,7 @@ import {
 } from "react-vertical-timeline-component";
 
 import { Activities, CTA, BackToIsland } from "../components";
+import AboutProfilePhoto from "../components/AboutProfilePhoto";
 import { SITE_BIO, SITE_NAME } from "../config/site";
 import { education, experiences, skillCategories } from "../constants";
 
@@ -24,6 +25,8 @@ const About = () => {
         </span>{" "}
         👋
       </h1>
+
+      <AboutProfilePhoto />
 
       <div className="mt-5 flex flex-col gap-3 text-slate-500">
         <p>{SITE_BIO}</p>

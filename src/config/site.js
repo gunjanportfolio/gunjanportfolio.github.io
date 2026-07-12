@@ -16,6 +16,7 @@ export const SITE_EDUCATION =
 export const SITE_CV_FILE_NAME = "Gunjan_Bandekar_CV.pdf";
 export const SITE_CV_LABEL = "Download CV";
 export const SITE_CV_PATH = `cv/${SITE_CV_FILE_NAME}`;
+export const SITE_PROFILE_ALT = `${SITE_FULL_NAME} profile photo`;
 
 export function getSiteCvHref(baseUrl = import.meta.env.BASE_URL) {
   const normalizedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;

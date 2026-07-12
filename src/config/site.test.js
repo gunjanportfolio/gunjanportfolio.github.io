@@ -14,6 +14,7 @@ import {
   SITE_NAME,
   SITE_TAGLINE,
   SITE_X_URL,
+  SITE_PROFILE_ALT,
   getSiteCvHref,
 } from "./site";
 
@@ -31,6 +32,7 @@ describe("site config", () => {
     expect(SITE_INSTAGRAM_URL).toBe("https://www.instagram.com/gunjaaan2/");
     expect(SITE_X_URL).toBe("https://x.com");
     expect(FORMCARRY_ENDPOINT).toBe("https://formcarry.com/s/BO_V3AU0Jro");
+    expect(SITE_PROFILE_ALT).toContain(SITE_FULL_NAME);
   });
 
   it("builds a downloadable CV href for root and nested bases", () => {
