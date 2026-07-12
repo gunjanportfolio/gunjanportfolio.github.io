@@ -424,8 +424,8 @@ const Home = () => {
       {showRotatingIntro ? <RotatingIntro /> : null}
 
       <div className="home-bottom-dock" data-testid="home-bottom-dock">
-        <FaqChatbot />
         <HomeSocialLinks />
+        <FaqChatbot />
       </div>
 
       {isTravelingToInterior ? (
