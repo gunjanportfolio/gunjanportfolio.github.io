@@ -22,16 +22,19 @@ describe("portfolio content", () => {
       company_name: "Happy Kids Dental Clinic",
       date: "July 2026 - Present",
       icon: happyKidsLogo,
+      iconBg: "#ffffff",
     });
     expect(experiences[1]).toMatchObject({
       title: "Data Analyst",
       company_name: "Mint Dental Clinic",
       date: "April 2025 - May 2026",
       icon: mintDentalLogo,
+      iconBg: "#ffffff",
     });
     expect(experiences[2]).toMatchObject({
       company_name: expect.stringContaining("HDFC"),
       icon: hdfcLogo,
+      iconBg: "#ffffff",
     });
   });
 

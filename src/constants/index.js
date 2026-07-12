@@ -86,7 +86,7 @@ export const experiences = [
     title: "Data Analyst & Treatment Coordinator",
     company_name: "Happy Kids Dental Clinic",
     icon: happyKidsLogo,
-    iconBg: "#111111",
+    iconBg: "#ffffff",
     date: "July 2026 - Present",
     points: [
       "Working as Data Analyst and Treatment Coordinator supporting clinic operations and patient care coordination.",
@@ -99,7 +99,7 @@ export const experiences = [
     title: "Data Analyst",
     company_name: "Mint Dental Clinic",
     icon: mintDentalLogo,
-    iconBg: "#111111",
+    iconBg: "#ffffff",
     date: "April 2025 - May 2026",
     points: [
       "Delivered data analysis and reporting to improve clinic performance visibility.",
