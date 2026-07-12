@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  ACTIVITIES_SECTION_INTRO,
+  ACTIVITIES_SECTION_TITLE,
+  activities,
   education,
   experiences,
   skillCategories,
@@ -31,5 +34,26 @@ describe("portfolio content", () => {
   it("includes Greenwich education entry", () => {
     expect(education[0].school).toBe("University of Greenwich");
     expect(education[0].degree).toMatch(/Business Information Technology/i);
+  });
+
+  it("lists BA community activities with required fields", () => {
+    expect(activities.length).toBeGreaterThanOrEqual(3);
+    expect(ACTIVITIES_SECTION_TITLE).toBe("Activities");
+    expect(ACTIVITIES_SECTION_INTRO).toMatch(/business analysis community/i);
+
+    for (const activity of activities) {
+      expect(activity.title.length).toBeGreaterThan(0);
+      expect(activity.organization.length).toBeGreaterThan(0);
+      expect(activity.date.length).toBeGreaterThan(0);
+      expect(activity.description.length).toBeGreaterThan(40);
+    }
+
+    expect(
+      activities.some((activity) =>
+        /business analyst|requirements|stakeholder/i.test(
+          `${activity.title} ${activity.description}`
+        )
+      )
+    ).toBe(true);
   });
 });

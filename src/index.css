@@ -252,8 +252,24 @@ body:has(.card[data-color="green"]:hover) {
   -webkit-backdrop-filter: blur(8px);
 }
 
+.rotating-intro-skill-slot {
+  display: inline-grid;
+  justify-items: start;
+  vertical-align: baseline;
+}
+
+.rotating-intro-skill-sizer,
 .rotating-intro-skill {
-  min-width: 8ch;
+  grid-area: 1 / 1;
+  white-space: nowrap;
+}
+
+.rotating-intro-skill-sizer {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.rotating-intro-skill {
   transition:
     opacity 0.3s ease,
     transform 0.3s ease;

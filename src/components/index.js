@@ -7,6 +7,7 @@ import HomeInfo from "./HomeInfo";
 import ExploreControls from "./ExploreControls";
 import MusicToggle from "./MusicToggle";
 import BackToIsland from "./BackToIsland";
+import Activities from "./Activities";
 
 export {
   CTA,
@@ -18,4 +19,5 @@ export {
   ExploreControls,
   MusicToggle,
   BackToIsland,
+  Activities,
 };

@@ -6,6 +6,7 @@ import {
   ROTATING_INTRO_FADE_MS,
   ROTATING_INTRO_INTERVAL_MS,
   ROTATING_INTRO_SKILLS,
+  getLongestRotatingIntroSkillLabel,
 } from "../../constants/rotatingIntro";
 import RotatingIntro from "./RotatingIntro";
 
@@ -30,6 +31,9 @@ describe("RotatingIntro", () => {
     expect(screen.getByTestId("rotating-intro-skill")).toHaveStyle({
       color: ROTATING_INTRO_SKILLS[0].color,
     });
+    expect(screen.getByTestId("rotating-intro-skill-slot")).toHaveTextContent(
+      getLongestRotatingIntroSkillLabel(ROTATING_INTRO_SKILLS)
+    );
   });
 
   it("rotates to the next skill after the interval", () => {

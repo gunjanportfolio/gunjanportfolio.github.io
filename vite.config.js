@@ -41,6 +41,7 @@ export default defineConfig({
         "src/components/BackToIsland/index.js",
         "src/components/SceneLoadingOverlay/index.js",
         "src/components/RotatingIntro/index.js",
+        "src/components/Activities/index.js",
         "src/utils/index.js",
         "src/test/**",
       ],

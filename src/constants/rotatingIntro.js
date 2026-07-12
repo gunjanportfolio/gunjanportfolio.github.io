@@ -12,6 +12,20 @@ export const ROTATING_INTRO_SKILLS = [
   { label: "Process Optimization", color: "#0369a1" },
 ];
 
+export function getLongestRotatingIntroSkillLabel(skills = ROTATING_INTRO_SKILLS) {
+  if (skills.length === 0) {
+    return "";
+  }
+
+  return skills.reduce((longestLabel, skill) => {
+    if (skill.label.length > longestLabel.length) {
+      return skill.label;
+    }
+
+    return longestLabel;
+  }, skills[0].label);
+}
+
 export function getNextRotatingIntroIndex(currentIndex, skillCount) {
   if (skillCount <= 0) {
     return 0;

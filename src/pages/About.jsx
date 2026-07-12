@@ -3,7 +3,7 @@ import {
   VerticalTimelineElement,
 } from "react-vertical-timeline-component";
 
-import { CTA, BackToIsland } from "../components";
+import { Activities, CTA, BackToIsland } from "../components";
 import { SITE_BIO, SITE_NAME } from "../config/site";
 import { education, experiences, skillCategories } from "../constants";
 
@@ -130,6 +130,8 @@ const About = () => {
           ))}
         </div>
       </div>
+
+      <Activities />
 
       <hr className="border-slate-200" />
 

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   ROTATING_INTRO_SKILLS,
+  getLongestRotatingIntroSkillLabel,
   getNextRotatingIntroIndex,
 } from "./rotatingIntro";
 
@@ -12,6 +13,13 @@ describe("rotatingIntro constants", () => {
       expect(skill.label.length).toBeGreaterThan(0);
       expect(skill.color).toMatch(/^#[0-9a-fA-F]{6}$/);
     });
+  });
+
+  it("returns the longest skill label for stable layout sizing", () => {
+    expect(getLongestRotatingIntroSkillLabel([])).toBe("");
+    expect(getLongestRotatingIntroSkillLabel(ROTATING_INTRO_SKILLS)).toBe(
+      "Stakeholder Management"
+    );
   });
 
   it("advances and wraps the skill index", () => {

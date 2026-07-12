@@ -5,8 +5,12 @@ import {
   ROTATING_INTRO_FADE_MS,
   ROTATING_INTRO_INTERVAL_MS,
   ROTATING_INTRO_SKILLS,
+  getLongestRotatingIntroSkillLabel,
   getNextRotatingIntroIndex,
 } from "../../constants/rotatingIntro";
+
+const LONGEST_ROTATING_INTRO_SKILL_LABEL =
+  getLongestRotatingIntroSkillLabel(ROTATING_INTRO_SKILLS);
 
 function RotatingIntro() {
   const [skillIndex, setSkillIndex] = useState(0);
@@ -53,16 +57,24 @@ function RotatingIntro() {
       <p className="rotating-intro-panel max-w-3xl text-center font-poppins text-base font-semibold text-slate-800 sm:text-xl md:text-2xl">
         <span>I am {SITE_NAME} and I am into </span>
         <span
-          aria-live="polite"
-          className={`rotating-intro-skill inline-block ${
-            isSkillVisible
-              ? "rotating-intro-skill-visible"
-              : "rotating-intro-skill-hidden"
-          }`}
-          data-testid="rotating-intro-skill"
-          style={{ color: activeSkill.color }}
+          className="rotating-intro-skill-slot"
+          data-testid="rotating-intro-skill-slot"
         >
-          {activeSkill.label}
+          <span aria-hidden="true" className="rotating-intro-skill-sizer">
+            {LONGEST_ROTATING_INTRO_SKILL_LABEL}
+          </span>
+          <span
+            aria-live="polite"
+            className={`rotating-intro-skill ${
+              isSkillVisible
+                ? "rotating-intro-skill-visible"
+                : "rotating-intro-skill-hidden"
+            }`}
+            data-testid="rotating-intro-skill"
+            style={{ color: activeSkill.color }}
+          >
+            {activeSkill.label}
+          </span>
         </span>
       </p>
     </div>

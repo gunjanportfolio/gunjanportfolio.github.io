@@ -125,6 +125,42 @@ export const education = [
   },
 ];
 
+export const activities = [
+  {
+    title: "Business Analyst Peer Mentoring",
+    organization: "Professional BA Network",
+    date: "2024 - Present",
+    description:
+      "Mentors early-career business analysts on requirements elicitation, stakeholder workshops, and turning ambiguous business problems into measurable analytics outcomes.",
+  },
+  {
+    title: "Healthcare Analytics Community Sessions",
+    organization: "Dental Clinic Operations Community",
+    date: "2025 - Present",
+    description:
+      "Shares clinic reporting practices, UAT approaches, and data-driven treatment coordination insights with operations and admin teams across healthcare analytics peers.",
+  },
+  {
+    title: "AI-Powered BI Practice Sharing",
+    organization: "Enterprise Analytics Circles",
+    date: "2021 - 2024",
+    description:
+      "Led informal knowledge-sharing sessions on executive dashboards, anomaly detection workflows, and reusable AI integration patterns from banking BA delivery.",
+  },
+  {
+    title: "BIT Peer Learning & Case Clinics",
+    organization: "University of Greenwich",
+    date: "2024 - 2025",
+    description:
+      "Participated in Management of Business Information Technology peer learning groups—reviewing process maps, gap analyses, and BI solution designs with fellow analysts.",
+  },
+];
+
+export const ACTIVITIES_SECTION_TITLE = "Activities";
+
+export const ACTIVITIES_SECTION_INTRO =
+  "Active in the business analysis community through mentoring, healthcare analytics knowledge exchange, and peer learning.";
+
 export const socialLinks = [
   {
     name: "Contact",
