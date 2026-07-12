@@ -31,6 +31,10 @@ import {
   getWaypointForArea,
   localWaypointToWorld,
 } from "../utils/explorationFlight";
+import {
+  INTERIOR_TRANSITION_SOUND,
+  playInteriorTransitionSound,
+} from "../utils/interiorTransitionAudio";
 import { getTargetRotationForArea } from "../utils/islandInteraction";
 
 const RETURN_FLIGHT_AREA_ID = PORTFOLIO_AREA_IDS.HOME;
@@ -298,6 +302,7 @@ const Home = () => {
       setIsTravelingToInterior(true);
       setCurrentStage(areaId);
       islandControlsRef.current?.goToArea(areaId);
+      playInteriorTransitionSound(INTERIOR_TRANSITION_SOUND.ENTER);
     },
     [
       cancelFlight,
@@ -359,6 +364,7 @@ const Home = () => {
     if (started) {
       seedBirdFlight(fromPosition, birdHome);
       setBirdControlled(true);
+      playInteriorTransitionSound(INTERIOR_TRANSITION_SOUND.EXIT);
     } else {
       isReturningHomeRef.current = false;
       setIsExitingInterior(false);

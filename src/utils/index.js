@@ -31,3 +31,7 @@ export {
   localWaypointToWorld,
   sampleFlightPath,
 } from "./explorationFlight";
+export {
+  INTERIOR_TRANSITION_SOUND,
+  playInteriorTransitionSound,
+} from "./interiorTransitionAudio";
