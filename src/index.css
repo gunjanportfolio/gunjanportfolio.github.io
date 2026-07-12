@@ -229,15 +229,16 @@ body:has(.card[data-color="green"]:hover) {
 .explore-gradient-text {
   background-image: linear-gradient(
     90deg,
-    #0f172a 0%,
-    #0369a1 22%,
-    #38bdf8 50%,
-    #0369a1 78%,
-    #0f172a 100%
+    #0c4a6e 0%,
+    #0369a1 20%,
+    #0ea5e9 50%,
+    #0369a1 80%,
+    #0c4a6e 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  -webkit-text-fill-color: transparent;
   animation: explore-text-shine 2.8s linear infinite;
 }
