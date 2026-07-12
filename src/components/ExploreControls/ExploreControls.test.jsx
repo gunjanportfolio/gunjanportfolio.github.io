@@ -47,8 +47,11 @@ describe("ExploreControls", () => {
     expect(screen.getByTestId("explore-first-visit-hint")).toHaveTextContent(
       EXPLORE_HINT_TITLE
     );
-    expect(screen.getByTestId("explore-first-visit-hint")).toHaveTextContent(
+    expect(screen.getByTestId("explore-hint-message")).toHaveTextContent(
       EXPLORE_HINT_MESSAGE
+    );
+    expect(screen.getByTestId("explore-hint-message").className).toMatch(
+      /explore-gradient-text/
     );
     expect(screen.getByTestId("area-navigator")).toBeInTheDocument();
     expect(screen.getByTestId("area-about").className).toMatch(

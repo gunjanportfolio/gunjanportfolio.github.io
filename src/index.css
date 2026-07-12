@@ -209,10 +209,35 @@ body:has(.card[data-color="green"]:hover) {
   }
 }
 
+@keyframes explore-text-shine {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
 .explore-area-pulse {
   animation: explore-soft-pulse 1.8s ease-in-out infinite;
 }
 
 .explore-hint-enter {
   animation: explore-hint-enter 0.55s ease-out both;
+}
+
+.explore-gradient-text {
+  background-image: linear-gradient(
+    90deg,
+    #0f172a 0%,
+    #0369a1 22%,
+    #38bdf8 50%,
+    #0369a1 78%,
+    #0f172a 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: explore-text-shine 2.8s linear infinite;
 }
