@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { SITE_NAME } from "../../config/site";
 import {
   ROTATING_INTRO_FADE_MS,
+  ROTATING_INTRO_GREETING,
   ROTATING_INTRO_INTERVAL_MS,
   ROTATING_INTRO_SKILLS,
   getLongestRotatingIntroSkillLabel,
@@ -55,7 +56,9 @@ function RotatingIntro() {
       data-testid="rotating-intro"
     >
       <p className="rotating-intro-panel max-w-3xl text-center font-poppins text-base font-semibold text-slate-800 sm:text-xl md:text-2xl">
-        <span>I am {SITE_NAME} and I am into </span>
+        <span>
+          {ROTATING_INTRO_GREETING} I am {SITE_NAME} and I am into{" "}
+        </span>
         <span
           className="rotating-intro-skill-slot"
           data-testid="rotating-intro-skill-slot"

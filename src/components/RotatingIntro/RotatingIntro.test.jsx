@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SITE_NAME } from "../../config/site";
 import {
   ROTATING_INTRO_FADE_MS,
+  ROTATING_INTRO_GREETING,
   ROTATING_INTRO_INTERVAL_MS,
   ROTATING_INTRO_SKILLS,
   getLongestRotatingIntroSkillLabel,
@@ -23,7 +24,7 @@ describe("RotatingIntro", () => {
     render(<RotatingIntro />);
 
     expect(screen.getByTestId("rotating-intro")).toHaveTextContent(
-      `I am ${SITE_NAME} and I am into`
+      `${ROTATING_INTRO_GREETING} I am ${SITE_NAME} and I am into`
     );
     expect(screen.getByTestId("rotating-intro-skill")).toHaveTextContent(
       ROTATING_INTRO_SKILLS[0].label

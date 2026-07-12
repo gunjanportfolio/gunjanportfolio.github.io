@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  ROTATING_INTRO_GREETING,
   ROTATING_INTRO_SKILLS,
   getLongestRotatingIntroSkillLabel,
   getNextRotatingIntroIndex,
@@ -8,6 +9,7 @@ import {
 
 describe("rotatingIntro constants", () => {
   it("defines colored skills for the home intro", () => {
+    expect(ROTATING_INTRO_GREETING).toBe("Hi 👋");
     expect(ROTATING_INTRO_SKILLS.length).toBeGreaterThanOrEqual(5);
     ROTATING_INTRO_SKILLS.forEach((skill) => {
       expect(skill.label.length).toBeGreaterThan(0);

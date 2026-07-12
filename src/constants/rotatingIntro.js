@@ -1,5 +1,6 @@
 export const ROTATING_INTRO_INTERVAL_MS = 2800;
 export const ROTATING_INTRO_FADE_MS = 320;
+export const ROTATING_INTRO_GREETING = "Hi 👋";
 
 export const ROTATING_INTRO_SKILLS = [
   { label: "Data Analytics", color: "#0f766e" },

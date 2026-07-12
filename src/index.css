@@ -254,7 +254,7 @@ body:has(.card[data-color="green"]:hover) {
 
 .rotating-intro-skill-slot {
   display: inline-grid;
-  justify-items: start;
+  justify-items: center;
   vertical-align: baseline;
 }
 
