@@ -8,6 +8,7 @@ import {
   InteriorCamera,
   LoadingTracker,
 } from "../components/ExplorationScene";
+import FaqChatbot from "../components/FaqChatbot";
 import HomeSocialLinks from "../components/HomeSocialLinks";
 import InteriorPanel from "../components/InteriorPanel";
 import RotatingIntro from "../components/RotatingIntro";
@@ -422,7 +423,10 @@ const Home = () => {
 
       {showRotatingIntro ? <RotatingIntro /> : null}
 
-      <HomeSocialLinks />
+      <div className="home-bottom-dock" data-testid="home-bottom-dock">
+        <FaqChatbot />
+        <HomeSocialLinks />
+      </div>
 
       {isTravelingToInterior ? (
         <div className="pointer-events-none absolute top-24 left-0 right-0 z-20 flex justify-center px-4">
