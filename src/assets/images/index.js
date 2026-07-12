@@ -5,6 +5,9 @@ import starbucks from './starbucks.png'
 import tesla from './tesla.png'
 import logo from './logo.svg'
 import profilePicture from './profile-picture.jpeg'
+import happyKidsLogo from './happy-kids-logo.png'
+import mintDentalLogo from './mint-dental-logo.png'
+import hdfcLogo from './hdfc-logo.png'
 
 export {
     hero,
@@ -13,5 +16,8 @@ export {
     starbucks,
     tesla,
     logo,
-    profilePicture
+    profilePicture,
+    happyKidsLogo,
+    mintDentalLogo,
+    hdfcLogo,
 }

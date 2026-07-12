@@ -1,4 +1,8 @@
-import { logo } from "../assets/images";
+import {
+  happyKidsLogo,
+  hdfcLogo,
+  mintDentalLogo,
+} from "../assets/images";
 import {
   car,
   contact,
@@ -81,8 +85,8 @@ export const experiences = [
   {
     title: "Data Analyst & Treatment Coordinator",
     company_name: "Happy Kids Dental Clinic",
-    icon: logo,
-    iconBg: "#accbe1",
+    icon: happyKidsLogo,
+    iconBg: "#111111",
     date: "July 2026 - Present",
     points: [
       "Working as Data Analyst and Treatment Coordinator supporting clinic operations and patient care coordination.",
@@ -94,8 +98,8 @@ export const experiences = [
   {
     title: "Data Analyst",
     company_name: "Mint Dental Clinic",
-    icon: logo,
-    iconBg: "#b7e4c7",
+    icon: mintDentalLogo,
+    iconBg: "#111111",
     date: "April 2025 - May 2026",
     points: [
       "Delivered data analysis and reporting to improve clinic performance visibility.",
@@ -106,8 +110,8 @@ export const experiences = [
   {
     title: "Business Analyst (Internship)",
     company_name: "HDFC · Pune, India",
-    icon: logo,
-    iconBg: "#a2d2ff",
+    icon: hdfcLogo,
+    iconBg: "#ffffff",
     date: "May 2020 - September 2024",
     points: [
       "Led requirements gathering with C-level stakeholders and designed an AI-powered BI platform with executive dashboards; reduced insight delivery time by 80% and improved accuracy for complex business queries by 35%.",

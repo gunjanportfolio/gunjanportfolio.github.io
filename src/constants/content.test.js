@@ -9,6 +9,11 @@ import {
   skillCategories,
   skills,
 } from "./index";
+import {
+  happyKidsLogo,
+  hdfcLogo,
+  mintDentalLogo,
+} from "../assets/images";
 
 describe("portfolio content", () => {
   it("lists current and previous data analyst roles first", () => {
@@ -16,13 +21,18 @@ describe("portfolio content", () => {
       title: "Data Analyst & Treatment Coordinator",
       company_name: "Happy Kids Dental Clinic",
       date: "July 2026 - Present",
+      icon: happyKidsLogo,
     });
     expect(experiences[1]).toMatchObject({
       title: "Data Analyst",
       company_name: "Mint Dental Clinic",
       date: "April 2025 - May 2026",
+      icon: mintDentalLogo,
     });
-    expect(experiences[2].company_name).toContain("HDFC");
+    expect(experiences[2]).toMatchObject({
+      company_name: expect.stringContaining("HDFC"),
+      icon: hdfcLogo,
+    });
   });
 
   it("includes BA and analytics skill categories", () => {
