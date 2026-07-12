@@ -3,7 +3,6 @@ import { useEffect, useRef } from "react";
 import { PORTFOLIO_AREAS } from "../../constants/portfolioAreas";
 import {
   EXPLORE_HINT_MESSAGE,
-  EXPLORE_HINT_TITLE,
   EXPLORE_ROTATE_LABEL,
 } from "../../constants/exploreUi";
 import useExploreHint from "../../hooks/useExploreHint";
@@ -63,36 +62,10 @@ const ExploreControls = ({
 
   return (
     <div
-      className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-slate-900/25 via-transparent to-transparent pb-4 pt-16"
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-20 pb-3 pt-8 sm:pb-4"
       data-testid="explore-controls"
     >
-      <div className="mx-auto mb-3 flex w-full max-w-3xl flex-col items-center gap-2.5 px-4 sm:mb-4">
-        {showExploreHint ? (
-          <div
-            className="explore-hint-enter pointer-events-none w-full max-w-lg rounded-2xl border border-slate-200 bg-white px-5 py-3 text-center shadow-lg shadow-black/20"
-            data-testid="explore-first-visit-hint"
-          >
-            <p className="font-poppins text-sm font-semibold text-slate-700 sm:text-base">
-              {EXPLORE_HINT_TITLE}
-            </p>
-            <p
-              className="explore-gradient-text mt-1 text-sm font-bold leading-snug sm:text-base"
-              data-testid="explore-hint-message"
-            >
-              {EXPLORE_HINT_MESSAGE}
-            </p>
-          </div>
-        ) : (
-          <p
-            className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white px-5 py-2.5 text-center shadow-lg shadow-black/20"
-            data-testid="explore-hint-message"
-          >
-            <span className="explore-gradient-text text-sm font-bold sm:text-base">
-              {EXPLORE_HINT_MESSAGE}
-            </span>
-          </p>
-        )}
-
+      <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-2 px-4">
         <div
           className="flex flex-wrap justify-center gap-2 pointer-events-auto"
           data-testid="area-navigator"
@@ -122,7 +95,23 @@ const ExploreControls = ({
           })}
         </div>
 
-        <div className="flex flex-col items-center gap-1.5 pointer-events-auto">
+        <div
+          className={`w-full max-w-lg rounded-2xl border border-slate-200 bg-white px-4 py-2 text-center shadow-lg shadow-black/20 ${
+            showExploreHint ? "explore-hint-enter" : ""
+          }`}
+          data-testid={
+            showExploreHint ? "explore-first-visit-hint" : "explore-hint-banner"
+          }
+        >
+          <p
+            className="explore-gradient-text text-sm font-bold leading-snug sm:text-base"
+            data-testid="explore-hint-message"
+          >
+            {EXPLORE_HINT_MESSAGE}
+          </p>
+        </div>
+
+        <div className="flex flex-col items-center gap-1 pointer-events-auto">
           <p className="rounded-full bg-slate-900/25 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/90">
             {EXPLORE_ROTATE_LABEL}
           </p>

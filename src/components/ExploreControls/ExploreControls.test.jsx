@@ -6,7 +6,6 @@ import { PORTFOLIO_AREA_IDS } from "../../constants/portfolioAreas";
 import {
   EXPLORE_HINT_MESSAGE,
   EXPLORE_HINT_STORAGE_KEY,
-  EXPLORE_HINT_TITLE,
 } from "../../constants/exploreUi";
 
 function createMemoryStorage() {
@@ -44,9 +43,7 @@ describe("ExploreControls", () => {
       />
     );
 
-    expect(screen.getByTestId("explore-first-visit-hint")).toHaveTextContent(
-      EXPLORE_HINT_TITLE
-    );
+    expect(screen.getByTestId("explore-first-visit-hint")).toBeInTheDocument();
     expect(screen.getByTestId("explore-hint-message")).toHaveTextContent(
       EXPLORE_HINT_MESSAGE
     );
