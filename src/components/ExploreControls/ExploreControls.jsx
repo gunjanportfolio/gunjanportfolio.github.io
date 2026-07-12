@@ -66,10 +66,10 @@ const ExploreControls = ({
       className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-slate-900/25 via-transparent to-transparent pb-4 pt-16"
       data-testid="explore-controls"
     >
-      <div className="mx-auto mb-14 flex w-full max-w-3xl flex-col items-center gap-3 px-4 sm:mb-16">
+      <div className="mx-auto mb-3 flex w-full max-w-3xl flex-col items-center gap-2.5 px-4 sm:mb-4">
         {showExploreHint ? (
           <div
-            className="explore-hint-enter pointer-events-none w-full max-w-lg rounded-2xl border border-slate-200 bg-white px-5 py-3.5 text-center shadow-lg shadow-black/20"
+            className="explore-hint-enter pointer-events-none w-full max-w-lg rounded-2xl border border-slate-200 bg-white px-5 py-3 text-center shadow-lg shadow-black/20"
             data-testid="explore-first-visit-hint"
           >
             <p className="font-poppins text-sm font-semibold text-slate-700 sm:text-base">
@@ -84,7 +84,7 @@ const ExploreControls = ({
           </div>
         ) : (
           <p
-            className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white px-5 py-3 text-center shadow-lg shadow-black/20"
+            className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white px-5 py-2.5 text-center shadow-lg shadow-black/20"
             data-testid="explore-hint-message"
           >
             <span className="explore-gradient-text text-sm font-bold sm:text-base">
