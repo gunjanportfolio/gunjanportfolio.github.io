@@ -10,6 +10,7 @@ import {
   summiz,
   threads,
 } from "../assets/icons";
+import { SITE_GITHUB_URL, SITE_LINKEDIN_URL } from "../config/site";
 
 export const skillCategories = [
   {
@@ -170,12 +171,12 @@ export const socialLinks = [
   {
     name: "GitHub",
     iconUrl: github,
-    link: "https://github.com/gunjanportfolio",
+    link: SITE_GITHUB_URL,
   },
   {
     name: "LinkedIn",
     iconUrl: linkedin,
-    link: "https://www.linkedin.com/in/gunjanbandekar1320/",
+    link: SITE_LINKEDIN_URL,
   },
 ];
 

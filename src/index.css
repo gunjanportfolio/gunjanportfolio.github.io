@@ -243,33 +243,24 @@ body:has(.card[data-color="green"]:hover) {
   animation: explore-text-shine 2.8s linear infinite;
 }
 
-.rotating-intro-panel {
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
-  padding: 0.65rem 1.25rem;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+.rotating-intro-text {
+  color: #ffffff;
+  text-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.5),
+    0 2px 12px rgba(15, 23, 42, 0.28);
 }
 
-.rotating-intro-skill-slot {
-  display: inline-grid;
-  justify-items: center;
-  vertical-align: baseline;
-}
-
-.rotating-intro-skill-sizer,
-.rotating-intro-skill {
-  grid-area: 1 / 1;
-  white-space: nowrap;
-}
-
-.rotating-intro-skill-sizer {
-  visibility: hidden;
-  pointer-events: none;
+.rotating-intro-wave {
+  display: inline-block;
+  transform-origin: 70% 70%;
+  animation: rotating-intro-wave 2.4s ease-in-out infinite;
 }
 
 .rotating-intro-skill {
+  display: inline;
+  text-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.55),
+    0 2px 10px rgba(15, 23, 42, 0.3);
   transition:
     opacity 0.3s ease,
     transform 0.3s ease;
@@ -284,4 +275,189 @@ body:has(.card[data-color="green"]:hover) {
 .rotating-intro-skill-hidden {
   opacity: 0;
   transform: translateY(0.45rem);
+}
+
+@keyframes rotating-intro-wave {
+  0%,
+  60%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  10%,
+  30% {
+    transform: rotate(18deg);
+  }
+
+  20%,
+  40% {
+    transform: rotate(-12deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rotating-intro-wave {
+    animation: none;
+  }
+}
+
+.home-social-links {
+  position: fixed;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.home-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 9999px;
+  background: rgba(248, 250, 252, 0.95);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.home-social-link:hover {
+  transform: translateY(-2px) scale(1.06);
+  background: #ffffff;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.16);
+}
+
+.home-social-link:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+.home-social-link-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  object-fit: contain;
+}
+
+.download-cv-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  border-radius: 9999px;
+  padding: 0.45rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  text-decoration: none;
+  background: linear-gradient(120deg, #00c6ff 0%, #0072ff 55%, #38bdf8 100%);
+  background-size: 180% 180%;
+  box-shadow:
+    0 0 10px rgba(0, 198, 255, 0.55),
+    0 0 22px rgba(0, 114, 255, 0.4),
+    0 0 36px rgba(56, 189, 248, 0.28);
+  animation:
+    download-cv-glow 2.4s ease-in-out infinite,
+    download-cv-sheen 4.5s linear infinite;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.download-cv-button:hover {
+  transform: translateY(-1px) scale(1.03);
+  box-shadow:
+    0 0 14px rgba(0, 198, 255, 0.75),
+    0 0 28px rgba(0, 114, 255, 0.55),
+    0 0 44px rgba(56, 189, 248, 0.4);
+}
+
+.download-cv-button:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 3px;
+}
+
+.download-cv-button-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.download-cv-button-glow::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.05) 35%,
+    transparent 60%
+  );
+  animation: download-cv-light-sweep 2.8s ease-in-out infinite;
+}
+
+.download-cv-button-label {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes download-cv-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 10px rgba(0, 198, 255, 0.5),
+      0 0 20px rgba(0, 114, 255, 0.35),
+      0 0 32px rgba(56, 189, 248, 0.22);
+  }
+
+  50% {
+    box-shadow:
+      0 0 16px rgba(0, 198, 255, 0.85),
+      0 0 30px rgba(0, 114, 255, 0.6),
+      0 0 48px rgba(56, 189, 248, 0.45);
+  }
+}
+
+@keyframes download-cv-sheen {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes download-cv-light-sweep {
+  0% {
+    transform: translateX(-30%) rotate(12deg);
+    opacity: 0.35;
+  }
+
+  50% {
+    transform: translateX(20%) rotate(12deg);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: translateX(45%) rotate(12deg);
+    opacity: 0.35;
+  }
 }

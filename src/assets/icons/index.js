@@ -16,6 +16,8 @@ import tailwindcss from './tailwindcss.svg'
 import typescript from './typescript.svg'
 import linkedin from './linkedin.svg'
 import twitter from './twitter.svg'
+import instagram from './instagram.svg'
+import x from './x.svg'
 import car from './car.svg'
 import estate from './estate.svg'
 import pricewise from './pricewise.svg'
@@ -46,6 +48,8 @@ export {
     typescript,
     linkedin,
     twitter,
+    instagram,
+    x,
     car,
     estate,
     pricewise,

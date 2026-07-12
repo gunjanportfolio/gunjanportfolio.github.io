@@ -8,6 +8,7 @@ import {
   InteriorCamera,
   LoadingTracker,
 } from "../components/ExplorationScene";
+import HomeSocialLinks from "../components/HomeSocialLinks";
 import InteriorPanel from "../components/InteriorPanel";
 import RotatingIntro from "../components/RotatingIntro";
 import SceneLoadingOverlay from "../components/SceneLoadingOverlay";
@@ -420,6 +421,8 @@ const Home = () => {
       ) : null}
 
       {showRotatingIntro ? <RotatingIntro /> : null}
+
+      <HomeSocialLinks />
 
       {isTravelingToInterior ? (
         <div className="pointer-events-none absolute top-24 left-0 right-0 z-20 flex justify-center px-4">

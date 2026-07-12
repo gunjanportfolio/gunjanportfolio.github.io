@@ -2,10 +2,11 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 
+import { SITE_CV_FILE_NAME, SITE_CV_LABEL, getSiteCvHref } from "../config/site";
 import Navbar from "./Navbar";
 
 describe("Navbar", () => {
-  it("renders About and Projects links", () => {
+  it("renders About, Projects, and Download CV links", () => {
     render(
       <MemoryRouter>
         <Navbar />
@@ -20,6 +21,11 @@ describe("Navbar", () => {
       "href",
       "/projects"
     );
+
+    const downloadLink = screen.getByTestId("download-cv-button");
+    expect(downloadLink).toHaveTextContent(SITE_CV_LABEL);
+    expect(downloadLink).toHaveAttribute("href", getSiteCvHref());
+    expect(downloadLink).toHaveAttribute("download", SITE_CV_FILE_NAME);
   });
 
   it("applies active styles on the About route", () => {

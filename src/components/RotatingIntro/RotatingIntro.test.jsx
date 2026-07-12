@@ -7,7 +7,6 @@ import {
   ROTATING_INTRO_GREETING,
   ROTATING_INTRO_INTERVAL_MS,
   ROTATING_INTRO_SKILLS,
-  getLongestRotatingIntroSkillLabel,
 } from "../../constants/rotatingIntro";
 import RotatingIntro from "./RotatingIntro";
 
@@ -18,13 +17,19 @@ describe("RotatingIntro", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.doUnmock("../../constants/rotatingIntro");
+    vi.resetModules();
   });
 
-  it("renders the intro line with the first skill color", () => {
+  it("renders the intro line with a waving emoji and the first skill color", () => {
     render(<RotatingIntro />);
 
     expect(screen.getByTestId("rotating-intro")).toHaveTextContent(
-      `${ROTATING_INTRO_GREETING} I am ${SITE_NAME} and I am into`
+      `${ROTATING_INTRO_GREETING} I am ${SITE_NAME} and I am into ${ROTATING_INTRO_SKILLS[0].label}`
+    );
+    expect(screen.getByTestId("rotating-intro-wave")).toHaveTextContent("👋");
+    expect(screen.getByTestId("rotating-intro-wave")).toHaveClass(
+      "rotating-intro-wave"
     );
     expect(screen.getByTestId("rotating-intro-skill")).toHaveTextContent(
       ROTATING_INTRO_SKILLS[0].label
@@ -32,9 +37,6 @@ describe("RotatingIntro", () => {
     expect(screen.getByTestId("rotating-intro-skill")).toHaveStyle({
       color: ROTATING_INTRO_SKILLS[0].color,
     });
-    expect(screen.getByTestId("rotating-intro-skill-slot")).toHaveTextContent(
-      getLongestRotatingIntroSkillLabel(ROTATING_INTRO_SKILLS)
-    );
   });
 
   it("rotates to the next skill after the interval", () => {
@@ -70,5 +72,29 @@ describe("RotatingIntro", () => {
     expect(screen.getByTestId("rotating-intro-skill")).toHaveTextContent(
       ROTATING_INTRO_SKILLS[0].label
     );
+  });
+
+  it("renders nothing when skills are empty", async () => {
+    vi.resetModules();
+    vi.doMock("../../constants/rotatingIntro", () => ({
+      ROTATING_INTRO_FADE_MS: 320,
+      ROTATING_INTRO_GREETING_TEXT: "Hi",
+      ROTATING_INTRO_WAVE_EMOJI: "👋",
+      ROTATING_INTRO_GREETING: "Hi 👋",
+      ROTATING_INTRO_INTERVAL_MS: 2800,
+      ROTATING_INTRO_SKILLS: [],
+      getNextRotatingIntroIndex: (currentIndex, skillCount) => {
+        if (skillCount <= 0) {
+          return 0;
+        }
+
+        return (currentIndex + 1) % skillCount;
+      },
+    }));
+
+    const { default: EmptyRotatingIntro } = await import("./RotatingIntro");
+    const { container } = render(<EmptyRotatingIntro />);
+
+    expect(container.firstChild).toBeNull();
   });
 });
