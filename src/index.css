@@ -242,3 +242,30 @@ body:has(.card[data-color="green"]:hover) {
   -webkit-text-fill-color: transparent;
   animation: explore-text-shine 2.8s linear infinite;
 }
+
+.rotating-intro-panel {
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+  padding: 0.65rem 1.25rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.rotating-intro-skill {
+  min-width: 8ch;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  will-change: opacity, transform;
+}
+
+.rotating-intro-skill-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.rotating-intro-skill-hidden {
+  opacity: 0;
+  transform: translateY(0.45rem);
+}

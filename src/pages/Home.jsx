@@ -9,6 +9,7 @@ import {
   LoadingTracker,
 } from "../components/ExplorationScene";
 import InteriorPanel from "../components/InteriorPanel";
+import RotatingIntro from "../components/RotatingIntro";
 import SceneLoadingOverlay from "../components/SceneLoadingOverlay";
 import { Loader } from "../components";
 import useExplorationFlight from "../hooks/useExplorationFlight";
@@ -391,6 +392,11 @@ const Home = () => {
     !isInside &&
     !isExitingInterior &&
     !isTravelingToInterior;
+  const showRotatingIntro =
+    !isLoadingOverlayMounted &&
+    !isInside &&
+    !isExitingInterior &&
+    !isTravelingToInterior;
   const showBiplane = outdoorControlsVisible;
   const showIslandBackdrop =
     !isInside && !isExitingInterior;
@@ -412,6 +418,8 @@ const Home = () => {
           isFading={isExitingInterior}
         />
       ) : null}
+
+      {showRotatingIntro ? <RotatingIntro /> : null}
 
       {isTravelingToInterior ? (
         <div className="pointer-events-none absolute top-24 left-0 right-0 z-20 flex justify-center px-4">
